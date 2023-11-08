@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
-import { readUser, createUser } from "./database/script";
+const { readUser, createUser } = require("./database/script.js");
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
@@ -29,18 +29,24 @@ app.get('/api/get-users', function(req, res){ //donne tous les utilisateurs
 });
 */
 
-app.get("/api/get-user/:username", function (req, res) {
+app.get("/api/get-user/:username", async function (req, res) {
   //donne un utilisateur
-  const usern = String(req.params.username);
-  const user = readUser(usern);
+  const usern = req.params.username;
+  const user = await readUser(usern);
+  console.log(user);
   res.json(user);
 });
-/*
-app.post('/api/create-user', function(req, res){
 
-} )
-
-*/
+app.post("/api/create-user", async function (req, res) {
+  //crée un utilisateur
+  const usern = req.body.username;
+  const token = req.body.token;
+  const user = await createUser(usern, token);
+  console.log(user);
+  console.log(token);
+  console.log(usern);
+  res.json(user);
+});
 
 app.get("*", (req, res) => {
   res.sendFile(HTML_FILE, function (err) {
