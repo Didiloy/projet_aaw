@@ -5,3 +5,4 @@ server/node_modules
 client/dist
 client/.parcel-cache
 server/database/node_modules
+server/.env
