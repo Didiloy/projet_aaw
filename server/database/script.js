@@ -61,6 +61,12 @@ async function readQuote(idq) {
   });
 }
 
+async function readAllQuotes() {
+  return await prisma.quote.findMany();
+}
+
+
+
 async function updateQuote(idq, cont, author) {
   return await prisma.quote.update({
     where: {
@@ -128,6 +134,7 @@ module.exports = {
   deleteUser,
   createQuote,
   readQuote,
+  readAllQuotes,
   updateQuote,
   deleteQuote,
   createFavorite,
