@@ -33,7 +33,7 @@ app.use(express.static(DIST_DIR));
 app.use(express.static(PUBLIC_DIR));
 
 
-app.connect(port,async function(req,res){
+app.connect("/api/connection",async function(req,res){
   const accessToken = req.params.accessToken
   const tokenType = req.params.tokenType
 
@@ -48,7 +48,9 @@ app.connect(port,async function(req,res){
       try {
         const create = createUser(username+'#'+discriminator,tokenType+accessToken)
       } catch (error) {
-        //TODO const user = updateUser()  modifier token est date du token
+        readUser(username+'#'+discriminator).then(result => {
+          const user2 = updateUser(username+'#'+discriminator,tokenType+accessToken,Date.now(),result.isAdmin)  
+        })
       }
       
     })
