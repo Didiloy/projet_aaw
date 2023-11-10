@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
-const { readUser, createUser, deleteUser, createQuote, readQuote, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite } = require("./database/script.js");
+const { readUser, createUser, deleteUser, createQuote, readQuote, readAllQuotes, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite } = require("./database/script.js");
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
@@ -80,6 +80,13 @@ app.get("/api/get-quote/:id", async function (req, res){
   res.json(quote);
 
 });
+
+app.get("/api/get-quotes", async function (req, res){
+  //récupère toutes les citations
+  const quotes = await readAllQuotes();
+  console.log(quotes);
+  res.json(quotes);
+})
 
 app.post("/api/create-quote", async function (req, res){
     //crée une citation
