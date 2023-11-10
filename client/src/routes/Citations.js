@@ -6,9 +6,29 @@ export default function Citations() {
   const modifyCitation = (event) => {
     set_citation_to_add(event.target.value);
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    fetch("/api/create-quote", {
+      method: "post",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+
+      //make sure to serialize your JSON body
+      body: JSON.stringify({
+        content: citation_to_add,
+        authorId: 1,
+      }),
+    })
+      .then((response) => {
+        //do something awesome that makes the world a better place
+        modifyCitation("");
+      })
+      .catch((err) => {});
   };
+
   return (
     <div>
       <Nav />
@@ -36,6 +56,7 @@ export default function Citations() {
                 placeholder="Ajouter une citation.."
                 aria-label="Add a citation"
                 onChange={modifyCitation}
+                value={citation_to_add}
               />
               <button type="submit" className="btn btn-primary ms-5">
                 Ajouter
