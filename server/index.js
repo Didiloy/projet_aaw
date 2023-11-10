@@ -6,10 +6,10 @@ require("dotenv").config();
 const {
   readUser,
   createUser,
-  updateUser,
   deleteUser,
   createQuote,
   readQuote,
+  readAllQuotes,
   updateQuote,
   deleteQuote,
   createFavorite,
@@ -128,12 +128,20 @@ app.get("/api/get-quote/:id", async function (req, res) {
   res.json(quote);
 });
 
+app.get("/api/get-quotes", async function (req, res) {
+  //récupère toutes les citations
+  const quotes = await readAllQuotes();
+  console.log(quotes);
+  res.json(quotes);
+});
+
 app.post("/api/create-quote", async function (req, res) {
   //crée une citation
   const cont = req.body.content;
   const author = req.body.authorId;
   const quote = await createQuote(cont, author);
   console.log(quote);
+  console.log(idq);
   console.log(cont);
   console.log(author);
   res.json(quote);
