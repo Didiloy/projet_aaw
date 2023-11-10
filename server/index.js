@@ -141,7 +141,6 @@ app.post("/api/create-quote", async function (req, res) {
   const author = req.body.authorId;
   const quote = await createQuote(cont, author);
   console.log(quote);
-  console.log(idq);
   console.log(cont);
   console.log(author);
   res.json(quote);

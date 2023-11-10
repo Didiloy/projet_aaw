@@ -5,7 +5,7 @@ export default function Citations() {
   let [citation_to_add, set_citation_to_add] = useState("");
   let [all_citations, set_all_citations] = useState([]);
   let id = 0;
-  useEffect(() => {
+  const fetch_all_citations = () => {
     fetch("/api/get-quotes")
       .then((response) => response.json())
       .then((data) => {
@@ -15,10 +15,15 @@ export default function Citations() {
       .catch((err) => {
         console.log(err);
       });
-  });
+  };
+  useEffect(fetch_all_citations, []);
 
   const modifyCitation = (event) => {
-    set_citation_to_add(event.target.value);
+    if (event.key === "Enter") {
+      handleSubmit(event);
+    } else {
+      set_citation_to_add(event.target.value);
+    }
   };
 
   const handleSubmit = (event) => {
@@ -41,6 +46,7 @@ export default function Citations() {
         set_citation_to_add("");
         response.json().then((data) => {
           console.log(data);
+          fetch_all_citations();
         });
       })
       .catch((err) => {
@@ -95,7 +101,7 @@ export default function Citations() {
               id++;
               return (
                 <Citation
-                  isAdmin={true}
+                  isAdmin={false}
                   citation={citation.content}
                   number={citation.id}
                   author={citation.authorId}
