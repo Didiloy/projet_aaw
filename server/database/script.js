@@ -87,8 +87,8 @@ async function deleteQuote(idq) {
 async function createFavorite(quote, user) {
   return await prisma.favorite.create({
     data: {
-      userId: user.username,
-      quoteId: quote.id,
+      userId: user, //string
+      quoteId: quote, //int
     },
   });
 }
@@ -107,8 +107,8 @@ async function updateFavorite(idf, quote, user) {
       id: idf,
     },
     data: {
-      userId: user.username,
-      quoteId: quote.id,
+      userId: user, //string
+      quoteId: quote, //int
     },
   });
 }

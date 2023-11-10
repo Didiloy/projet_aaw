@@ -5,7 +5,7 @@ const cors = require("cors");
 require("dotenv").config();
 const { readUser, createUser, updateUser, deleteUser, createQuote, readQuote, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite } = require("./database/script.js");
 const port = process.env.PORT || 3000;
-const Discord = require('discord.js');
+/*const Discord = require('discord.js');
 const client = new Discord.Client();
 
 client.on('ready', () => {
@@ -15,7 +15,7 @@ client.on('ready', () => {
 client.on('error', console.error); // Afficher les erreurs
 
 client.login(BOT_TOKEN);
-
+*/
 app.listen(port, () => {
   console.log(`The app server is running on port: ${port}`);
 });
@@ -27,7 +27,7 @@ const HTML_FILE = path.join(
   "index.html"
 );
 
-app.use(cors());
+app.use(cors()); 
 app.use(express.json());
 app.use(express.static(DIST_DIR));
 app.use(express.static(PUBLIC_DIR));
@@ -80,9 +80,11 @@ app.post("/api/create-user", async function (req, res) {
 app.post("/api/update-user/:username", async function (req, res){
   //met à jour un utilisateur
   const username = req.params.username;
+  const tok = req.body.token;
+  const datetok = req.body.tokenCreation;
   const isAd = req.body.isAdmin;
   console.log(isAd);
-  const user = await updateUser(username, isAd);
+  const user = await updateUser(username,tok,datetok, isAd);
   console.log(user);
   res.json(user);
 });
@@ -96,9 +98,7 @@ app.delete("/api/delete-user/:username", async function (req, res){
     response.message = "User deleted with success !"
     res.status(200).json(response);
     
-    res.json(response);
   }catch (err){
-    req.log.error(err);
     response.message = "Error during deleting user  \n" + err;
     response.isDeleted = false;
 
@@ -147,9 +147,8 @@ app.delete("/api/delete-quote/:id", async function(req, res){
     const quote = await deleteQuote(idq);
     response.message = "quote deleted with success ! "
     res.status(200).json(response);
-    res.json(response);
+  
   }catch(err){
-    req.log.error(err);
     response.message = "Error during deleting quote   " + err;
     response.isDeleted = false;
 
@@ -200,7 +199,6 @@ app.delete("/api/delete-favorite/:id", async function(req, res){
     response.message = "Succeed in deleting Favorite !";
     res.status(200).json(response);
   }catch (err){
-    req.log(err);
     response.message = "Error delete Favorite   \n" + err;
     response.isDeleted = false;
     res.status(500).json(response);
