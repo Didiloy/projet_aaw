@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import App from "./App.js"; //homepage
+import Citations from "./routes/Citations.js";
+import Login from "./routes/Login.js";
 
 const AppRouting = () => (
   <Router>
