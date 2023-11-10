@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@prisma/client": "^5.5.2",
-    "@prisma/studio": "^0.495.0",
     "dotenv": "^16.3.1",
     "pg": "^8.11.3",
     "studio": "^0.13.5"
