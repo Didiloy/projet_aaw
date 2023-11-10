@@ -3,19 +3,32 @@ const app = express();
 const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
-const { readUser, createUser, deleteUser, createQuote, readQuote, readAllQuotes, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite } = require("./database/script.js");
+const {
+  readUser,
+  createUser,
+  deleteUser,
+  createQuote,
+  readQuote,
+  readAllQuotes,
+  updateQuote,
+  deleteQuote,
+  createFavorite,
+  readFavorite,
+  updateFavorite,
+  deleteFavorite,
+} = require("./database/script.js");
 const port = process.env.PORT || 3000;
-/*const Discord = require('discord.js');
-const client = new Discord.Client();
+// const Discord = require("discord.js");
+// const client = new Discord.Client();
 
-client.on('ready', () => {
-  console.log(`le bot a démarrer`); // On affiche un message de log dans la console (ligne de commande), lorsque le bot est démarré
-});
+// client.on("ready", () => {
+//   console.log(`le bot a démarrer`); // On affiche un message de log dans la console (ligne de commande), lorsque le bot est démarré
+// });
 
-client.on('error', console.error); // Afficher les erreurs
+// client.on("error", console.error); // Afficher les erreurs
 
-client.login(BOT_TOKEN);
-*/
+// client.login(BOT_TOKEN);
+
 app.listen(port, () => {
   console.log(`The app server is running on port: ${port}`);
 });
@@ -27,34 +40,40 @@ const HTML_FILE = path.join(
   "index.html"
 );
 
-app.use(cors()); 
+app.use(cors());
 app.use(express.json());
 app.use(express.static(DIST_DIR));
 app.use(express.static(PUBLIC_DIR));
 
+app.connect(port, async function (req, res) {
+  const accessToken = req.params.accessToken;
+  const tokenType = req.params.tokenType;
 
-app.connect(port,async function(req,res){
-  const accessToken = req.params.accessToken
-  const tokenType = req.params.tokenType
-
-  fetch('https://discord.com/api/users/@me', {
-		headers: {
-			authorization: `${tokenType} ${accessToken}`,
-		},
-	})
-    .then(result => result.json())
-    .then(response => {
+  fetch("https://discord.com/api/users/@me", {
+    headers: {
+      authorization: `${tokenType} ${accessToken}`,
+    },
+  })
+    .then((result) => result.json())
+    .then((response) => {
       const { username, discriminator } = response;
       try {
-        const create = createUser(username+'#'+discriminator,tokenType+accessToken)
+        const create = createUser(
+          username + "#" + discriminator,
+          tokenType + accessToken
+        );
       } catch (error) {
-        //TODO const user = updateUser()  modifier token est date du token
+        readUser(username + "#" + discriminator).then((result) => {
+          const user2 = updateUser(
+            username + "#" + discriminator,
+            tokenType + accessToken,
+            Date.now(),
+            result.isAdmin
+          );
+        });
       }
-      
-    })
-})
-
-
+    });
+});
 
 //======= User ======
 
@@ -77,28 +96,27 @@ app.post("/api/create-user", async function (req, res) {
   res.json(user);
 });
 
-app.post("/api/update-user/:username", async function (req, res){
+app.post("/api/update-user/:username", async function (req, res) {
   //met à jour un utilisateur
   const username = req.params.username;
   const tok = req.body.token;
   const datetok = req.body.tokenCreation;
   const isAd = req.body.isAdmin;
   console.log(isAd);
-  const user = await updateUser(username,tok,datetok, isAd);
+  const user = await updateUser(username, tok, datetok, isAd);
   console.log(user);
   res.json(user);
 });
 
-app.delete("/api/delete-user/:username", async function (req, res){
+app.delete("/api/delete-user/:username", async function (req, res) {
   //delete user
   const usern = req.params.username;
-  const response = {isDeleted : true};
+  const response = { isDeleted: true };
   try {
     const user = await deleteUser(usern);
-    response.message = "User deleted with success !"
+    response.message = "User deleted with success !";
     res.status(200).json(response);
-    
-  }catch (err){
+  } catch (err) {
     response.message = "Error during deleting user  \n" + err;
     response.isDeleted = false;
 
@@ -108,37 +126,35 @@ app.delete("/api/delete-user/:username", async function (req, res){
 
 //======= Quote ======
 
-app.get("/api/get-quote/:id", async function (req, res){
+app.get("/api/get-quote/:id", async function (req, res) {
   //récupère une citation
   const idq = req.params.id;
   const quote = await readQuote(idq);
   console.log(quote);
   res.json(quote);
-
 });
 
-app.get("/api/get-quotes", async function (req, res){
+app.get("/api/get-quotes", async function (req, res) {
   //récupère toutes les citations
   const quotes = await readAllQuotes();
   console.log(quotes);
   res.json(quotes);
-})
-
-app.post("/api/create-quote", async function (req, res){
-    //crée une citation
-    const cont = req.body.content;
-    const author = req.body.authorId;
-    const quote = await createQuote(cont, author);
-    console.log(quote);
-    console.log(idq);
-    console.log(cont);
-    console.log(author);
-    res.json(quote);
 });
 
-app.post("/api/update-quote/:id", async function(req, res){
+app.post("/api/create-quote", async function (req, res) {
+  //crée une citation
+  const cont = req.body.content;
+  const author = req.body.authorId;
+  const quote = await createQuote(cont, author);
+  console.log(quote);
+  console.log(cont);
+  console.log(author);
+  res.json(quote);
+});
+
+app.post("/api/update-quote/:id", async function (req, res) {
   //mets à jour une citation
-  const id = req.params.id
+  const id = req.params.id;
   const cont = req.body.content;
   const author = req.body.authorId;
   const quote = await updateQuote(id, cont, author);
@@ -146,16 +162,15 @@ app.post("/api/update-quote/:id", async function(req, res){
   res.json(quote);
 });
 
-app.delete("/api/delete-quote/:id", async function(req, res){
+app.delete("/api/delete-quote/:id", async function (req, res) {
   //supprime une citation
   const idq = req.params.id;
-  const response = {isDeleted : true};
-  try{
+  const response = { isDeleted: true };
+  try {
     const quote = await deleteQuote(idq);
-    response.message = "quote deleted with success ! "
+    response.message = "quote deleted with success ! ";
     res.status(200).json(response);
-  
-  }catch(err){
+  } catch (err) {
     response.message = "Error during deleting quote   " + err;
     response.isDeleted = false;
 
@@ -165,7 +180,7 @@ app.delete("/api/delete-quote/:id", async function(req, res){
 
 //Favorite Management
 
-app.post("/api/create-favorite", async function (req, res){
+app.post("/api/create-favorite", async function (req, res) {
   //creation of Favorite
   const quote = req.body.quoteId;
   const user = req.body.userId;
@@ -177,9 +192,9 @@ app.post("/api/create-favorite", async function (req, res){
   console.log(user);
 
   res.json(favorite);
-}); 
+});
 
-app.get("/api/get-favorite/:id", async function(req, res){
+app.get("/api/get-favorite/:id", async function (req, res) {
   //read favorite
   const id = req.params.id;
   const favorite = await readFavorite(id);
@@ -187,7 +202,7 @@ app.get("/api/get-favorite/:id", async function(req, res){
   res.json(favorite);
 });
 
-app.post("/api/update-favorite/:id", async function(req, res){
+app.post("/api/update-favorite/:id", async function (req, res) {
   //update favorite
   const id = req.params.id;
   const quote = req.body.quoteId;
@@ -197,15 +212,15 @@ app.post("/api/update-favorite/:id", async function(req, res){
   res.json(favorite);
 });
 
-app.delete("/api/delete-favorite/:id", async function(req, res){
+app.delete("/api/delete-favorite/:id", async function (req, res) {
   //delete favorite
   const idfav = req.params.id;
-  const response = {isDeleted : true};
-  try{
+  const response = { isDeleted: true };
+  try {
     const favorite = await deleteFavorite(idfav);
     response.message = "Succeed in deleting Favorite !";
     res.status(200).json(response);
-  }catch (err){
+  } catch (err) {
     response.message = "Error delete Favorite   \n" + err;
     response.isDeleted = false;
     res.status(500).json(response);
@@ -219,4 +234,3 @@ app.get("*", (req, res) => {
     }
   });
 });
-
