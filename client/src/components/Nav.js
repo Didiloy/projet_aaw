@@ -13,11 +13,6 @@ export default function Nav() {
                 Citations
               </a>
             </li>
-            <li className="nav-item">
-              <a className="nav-link text-light" href="/login">
-                Login
-              </a>
-            </li>
           </ul>
           <form
             className="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"

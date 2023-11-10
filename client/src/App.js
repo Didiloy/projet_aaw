@@ -3,7 +3,7 @@ import Nav from "./components/Nav";
 import Hero from "./components/Hero";
 
 function isConnected() {
-  return true;
+  return false;
 }
 
 const App = () => {

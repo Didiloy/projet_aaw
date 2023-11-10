@@ -5,6 +5,16 @@ const cors = require("cors");
 require("dotenv").config();
 const { readUser, createUser, updateUser, deleteUser, createQuote, readQuote, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite } = require("./database/script.js");
 const port = process.env.PORT || 3000;
+const Discord = require('discord.js');
+const client = new Discord.Client();
+
+client.on('ready', () => {
+  console.log(`le bot a démarrer`); // On affiche un message de log dans la console (ligne de commande), lorsque le bot est démarré
+});
+
+client.on('error', console.error); // Afficher les erreurs
+
+client.login(BOT_TOKEN);
 
 app.listen(port, () => {
   console.log(`The app server is running on port: ${port}`);
@@ -21,6 +31,30 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(DIST_DIR));
 app.use(express.static(PUBLIC_DIR));
+
+
+app.connect(port,async function(req,res){
+  const accessToken = req.params.accessToken
+  const tokenType = req.params.tokenType
+
+  fetch('https://discord.com/api/users/@me', {
+		headers: {
+			authorization: `${tokenType} ${accessToken}`,
+		},
+	})
+    .then(result => result.json())
+    .then(response => {
+      const { username, discriminator } = response;
+      try {
+        const create = createUser(username+'#'+discriminator,tokenType+accessToken)
+      } catch (error) {
+        //TODO const user = updateUser()  modifier token est date du token
+      }
+      
+    })
+})
+
+
 
 //======= User ======
 
@@ -180,3 +214,4 @@ app.get("*", (req, res) => {
     }
   });
 });
+
