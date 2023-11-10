@@ -63,7 +63,14 @@ app.connect(port, async function (req, res) {
           tokenType + accessToken
         );
       } catch (error) {
-        //TODO const user = updateUser()  modifier token est date du token
+        readUser(username + "#" + discriminator).then((result) => {
+          const user2 = updateUser(
+            username + "#" + discriminator,
+            tokenType + accessToken,
+            Date.now(),
+            result.isAdmin
+          );
+        });
       }
     });
 });
@@ -92,9 +99,11 @@ app.post("/api/create-user", async function (req, res) {
 app.post("/api/update-user/:username", async function (req, res) {
   //met à jour un utilisateur
   const username = req.params.username;
+  const tok = req.body.token;
+  const datetok = req.body.tokenCreation;
   const isAd = req.body.isAdmin;
   console.log(isAd);
-  const user = await updateUser(username, isAd);
+  const user = await updateUser(username, tok, datetok, isAd);
   console.log(user);
   res.json(user);
 });
@@ -107,10 +116,7 @@ app.delete("/api/delete-user/:username", async function (req, res) {
     const user = await deleteUser(usern);
     response.message = "User deleted with success !";
     res.status(200).json(response);
-
-    res.json(response);
   } catch (err) {
-    req.log.error(err);
     response.message = "Error during deleting user  \n" + err;
     response.isDeleted = false;
 
@@ -164,9 +170,7 @@ app.delete("/api/delete-quote/:id", async function (req, res) {
     const quote = await deleteQuote(idq);
     response.message = "quote deleted with success ! ";
     res.status(200).json(response);
-    res.json(response);
   } catch (err) {
-    req.log.error(err);
     response.message = "Error during deleting quote   " + err;
     response.isDeleted = false;
 
@@ -217,7 +221,6 @@ app.delete("/api/delete-favorite/:id", async function (req, res) {
     response.message = "Succeed in deleting Favorite !";
     res.status(200).json(response);
   } catch (err) {
-    req.log(err);
     response.message = "Error delete Favorite   \n" + err;
     response.isDeleted = false;
     res.status(500).json(response);
