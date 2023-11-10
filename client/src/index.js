@@ -10,6 +10,7 @@ const AppRouting = () => (
       <Route exact path="/" element={<App />} />
       <Route exact path="/citations" element={<App />} />
       <Route exact path="/login" element={<App />} />
+      <Route exact path="/auth" element={<Auth/>}/>
     </Routes>
   </Router>
 );
