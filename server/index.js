@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
-const { readUser, createUser, deleteUser, createQuote, readQuote, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite } = require("./database/script.js");
+const { readUser, createUser, deleteUser, createQuote, readQuote, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite, updateUser } = require("./database/script.js");
 const port = process.env.PORT || 3000;
 const Discord = require('discord.js');
 const client = new Discord.Client();
@@ -34,7 +34,24 @@ app.use(express.static(PUBLIC_DIR));
 
 
 app.connect(port,async function(req,res){
-  
+  const accessToken = req.params.accessToken
+  const tokenType = req.params.tokenType
+
+  fetch('https://discord.com/api/users/@me', {
+		headers: {
+			authorization: `${tokenType} ${accessToken}`,
+		},
+	})
+    .then(result => result.json())
+    .then(response => {
+      const { username, discriminator } = response;
+      try {
+        const create = createUser(username+'#'+discriminator,tokenType+accessToken)
+      } catch (error) {
+        //TODO const user = updateUser()  modifier token est date du token
+      }
+      
+    })
 })
 
 

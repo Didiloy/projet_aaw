@@ -11,8 +11,7 @@ const AppRouting = () => (
     <Routes>
       <Route exact path="/" element={<App />} />
       <Route exact path="/citations" element={<App />} />
-      <Route exact path="/login" element={<App />} />
-      <Route exact path="/auth" element={<Auth/>}/>
+      <Route exact path="/login" element={<Login />} />
     </Routes>
   </Router>
 );
