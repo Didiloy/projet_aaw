@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
-const { readUser, createUser } = require("./database/script.js");
+const { readUser, createUser, updateUser, deleteUser, updateQuote } = require("./database/script.js");
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
@@ -24,10 +24,6 @@ app.use(express.static(PUBLIC_DIR));
 
 //======= User ======
 
-/*
-app.get('/api/get-users', function(req, res){ //donne tous les utilisateurs 
-});
-*/
 
 app.get("/api/get-user/:username", async function (req, res) {
   //donne un utilisateur
@@ -47,6 +43,78 @@ app.post("/api/create-user", async function (req, res) {
   console.log(usern);
   res.json(user);
 });
+
+app.post("/api/update-user/:username", async function (req, res){
+  //met à jour un utilisateur
+  const isAd = req.body.isAdmin;
+  const user = await updateUser(username, isAd);
+  console.log(user);
+  res.json(user);
+})
+
+app.delete("/api/delete-user/:username", async function (req, res){
+  //supprime un utilisateur
+  const usern = req.body.username;
+
+  if(usern === -1) return res.status(404).json({})
+
+  const user = await deleteUser(usern);
+  console.log(user);
+  res.json(user);
+
+})
+
+//======= Quote ======
+
+app.get("/api/get-quote/:id", async function (req, res){
+  //récupère une citation
+  const idq = req.params.id;
+  const quote = await readQuote(idq);
+  console.log(quote);
+  res.json(quote);
+
+})
+
+app.post("/api/create-quote", async function (req, res){
+    //crée une citation
+    const idq = req.body.id;
+    const cont = req.body.content;
+    const author = req.body.authorId;
+    const quote = await createQuote(idq, cont, author);
+    console.log(quote);
+    console.log(idq);
+    console.log(cont);
+    console.log(author);
+    res.json(quote);
+})
+
+app.post("/api/update-quote/:id", async function(req, res){
+  //mets à jour une citation
+  const cont = req.body.content;
+  const author = req.body.authorId;
+  const quote = await updateQuote(id, cont, author);
+  console.log(quote);
+  res.json(quote);
+})
+
+app.delete("/api/delete-quote/:id", async function(req, res){
+  //supprime une citation
+  const idq = req.body.id;
+  const response = {isDeleted : true};
+  try{
+    const quote = await deleteQuote(idq);
+    response.message = "quote deleted with success ! "
+    res.status(200).json(response);
+    res.json(response);
+  }catch(err){
+    req.log.error(err);
+    response.message = "Error during deleting quote   " + err;
+    response.isDeleted = false;
+
+    res.status(500).json(response);
+  }
+})
+
 
 app.get("*", (req, res) => {
   res.sendFile(HTML_FILE, function (err) {
