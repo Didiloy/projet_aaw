@@ -45,6 +45,7 @@ app.post("/api/create-user", async function (req, res) {
 
 app.post("/api/update-user/:username", async function (req, res){
   //met à jour un utilisateur
+  const username = req.params.username;
   const isAd = req.body.isAdmin;
   const user = await updateUser(username, isAd);
   console.log(user);
@@ -53,7 +54,7 @@ app.post("/api/update-user/:username", async function (req, res){
 
 app.delete("/api/delete-user/:username", async function (req, res){
   //delete user
-  const usern = req.body.username;
+  const usern = req.params.username;
   const response = {isDeleted : true};
   try {
     const user = await deleteUser(usern);
@@ -96,6 +97,7 @@ app.post("/api/create-quote", async function (req, res){
 
 app.post("/api/update-quote/:id", async function(req, res){
   //mets à jour une citation
+  const id = req.params.id
   const cont = req.body.content;
   const author = req.body.authorId;
   const quote = await updateQuote(id, cont, author);
@@ -105,7 +107,7 @@ app.post("/api/update-quote/:id", async function(req, res){
 
 app.delete("/api/delete-quote/:id", async function(req, res){
   //supprime une citation
-  const idq = req.body.id;
+  const idq = req.params.id;
   const response = {isDeleted : true};
   try{
     const quote = await deleteQuote(idq);
@@ -140,14 +142,15 @@ app.post("/api/create-favorite", async function (req, res){
 
 app.get("/api/get-favorite/:id", async function(req, res){
   //read favorite
-  const idfav = req.body.id;
-  const favorite = await readFavorite(idfav);
+  const id = req.params.id;
+  const favorite = await readFavorite(id);
   console.log(favorite);
   res.json(favorite);
 });
 
 app.post("/api/update-favorite/:id", async function(req, res){
   //update favorite
+  const id = req.params.id;
   const quote = req.body.quoteId;
   const user = req.body.userId;
   const favorite = await updateFavorite(id, quote, user);
@@ -157,7 +160,7 @@ app.post("/api/update-favorite/:id", async function(req, res){
 
 app.delete("/api/delete-favorite/:id", async function(req, res){
   //delete favorite
-  const idfav = req.body.id;
+  const idfav = req.params.id;
   const response = {isDeleted : true};
   try{
     const favorite = await deleteFavorite(idfav);
