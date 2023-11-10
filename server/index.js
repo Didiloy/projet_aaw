@@ -24,7 +24,6 @@ app.use(express.static(PUBLIC_DIR));
 
 //======= User ======
 
-
 app.get("/api/get-user/:username", async function (req, res) {
   //donne un utilisateur
   const usern = req.params.username;
@@ -53,6 +52,7 @@ app.post("/api/update-user/:username", async function (req, res){
 });
 
 app.delete("/api/delete-user/:username", async function (req, res){
+  //delete user
   const usern = req.body.username;
   const response = {isDeleted : true};
   try {
@@ -122,6 +122,7 @@ app.delete("/api/delete-quote/:id", async function(req, res){
 });
 
 //Favorite Management
+
 app.post("/api/create-favorite", async function (req, res){
   //creation of Favorite
   const idfav = req.body.id;
@@ -138,6 +139,7 @@ app.post("/api/create-favorite", async function (req, res){
 }); 
 
 app.get("/api/get-favorite/:id", async function(req, res){
+  //read favorite
   const idfav = req.body.id;
   const favorite = await readFavorite(idfav);
   console.log(favorite);
@@ -145,6 +147,7 @@ app.get("/api/get-favorite/:id", async function(req, res){
 });
 
 app.post("/api/update-favorite/:id", async function(req, res){
+  //update favorite
   const quote = req.body.quoteId;
   const user = req.body.userId;
   const favorite = await updateFavorite(id, quote, user);
@@ -153,6 +156,7 @@ app.post("/api/update-favorite/:id", async function(req, res){
 });
 
 app.delete("/api/delete-favorite/:id", async function(req, res){
+  //delete favorite
   const idfav = req.body.id;
   const response = {isDeleted : true};
   try{
