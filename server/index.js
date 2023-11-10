@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
-const { readUser, createUser, deleteUser, createQuote, readQuote, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite } = require("./database/script.js");
+const { readUser, createUser, updateUser, deleteUser, createQuote, readQuote, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite } = require("./database/script.js");
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
@@ -47,6 +47,7 @@ app.post("/api/update-user/:username", async function (req, res){
   //met à jour un utilisateur
   const username = req.params.username;
   const isAd = req.body.isAdmin;
+  console.log(isAd);
   const user = await updateUser(username, isAd);
   console.log(user);
   res.json(user);
@@ -84,10 +85,9 @@ app.get("/api/get-quote/:id", async function (req, res){
 
 app.post("/api/create-quote", async function (req, res){
     //crée une citation
-    const idq = req.body.id;
     const cont = req.body.content;
     const author = req.body.authorId;
-    const quote = await createQuote(idq, cont, author);
+    const quote = await createQuote(cont, author);
     console.log(quote);
     console.log(idq);
     console.log(cont);
@@ -127,10 +127,9 @@ app.delete("/api/delete-quote/:id", async function(req, res){
 
 app.post("/api/create-favorite", async function (req, res){
   //creation of Favorite
-  const idfav = req.body.id;
   const quote = req.body.quoteId;
   const user = req.body.userId;
-  const favorite = await createFavorite(idfav, quote, user);
+  const favorite = await createFavorite(quote, user);
   //phase de test (a suppr plus tard)
   console.log(favorite);
   console.log(idfav);

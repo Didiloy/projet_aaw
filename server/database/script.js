@@ -22,13 +22,15 @@ async function readUser(usern) {
   });
 }
 
-async function updateUser(usern, isAd) {
+async function updateUser(usern, tok, datetok, isAd) {
   return await prisma.user.update({
     where: {
       username: usern,
     },
     data: {
       isAdmin: isAd,
+      token : tok,
+      tokenCreation : datetok,
     },
   });
 }
@@ -43,10 +45,9 @@ async function deleteUser(usern) {
 
 //=========crud Quote ============
 
-async function createQuote(idq, cont, author) {
+async function createQuote(cont, author) {
   return await prisma.quote.create({
     data: {
-      id: idq,
       content: cont,
       authorId: author.username,
     },
@@ -83,10 +84,9 @@ async function deleteQuote(idq) {
 
 //========= crud Favorite =============
 
-async function createFavorite(idf, quote, user) {
+async function createFavorite(quote, user) {
   return await prisma.favorite.create({
     data: {
-      id: idf,
       userId: user.username,
       quoteId: quote.id,
     },
