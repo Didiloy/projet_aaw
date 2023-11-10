@@ -3,8 +3,18 @@ const app = express();
 const path = require("path");
 const cors = require("cors");
 require("dotenv").config();
-const { readUser, createUser, deleteUser, createQuote, readQuote, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite } = require("./database/script.js");
+const { readUser, createUser, updateUser, deleteUser, createQuote, readQuote, updateQuote, deleteQuote, createFavorite, readFavorite, updateFavorite, deleteFavorite } = require("./database/script.js");
 const port = process.env.PORT || 3000;
+const Discord = require('discord.js');
+const client = new Discord.Client();
+
+client.on('ready', () => {
+  console.log(`le bot a démarrer`); // On affiche un message de log dans la console (ligne de commande), lorsque le bot est démarré
+});
+
+client.on('error', console.error); // Afficher les erreurs
+
+client.login(BOT_TOKEN);
 
 app.listen(port, () => {
   console.log(`The app server is running on port: ${port}`);
@@ -21,6 +31,30 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(DIST_DIR));
 app.use(express.static(PUBLIC_DIR));
+
+
+app.connect(port,async function(req,res){
+  const accessToken = req.params.accessToken
+  const tokenType = req.params.tokenType
+
+  fetch('https://discord.com/api/users/@me', {
+		headers: {
+			authorization: `${tokenType} ${accessToken}`,
+		},
+	})
+    .then(result => result.json())
+    .then(response => {
+      const { username, discriminator } = response;
+      try {
+        const create = createUser(username+'#'+discriminator,tokenType+accessToken)
+      } catch (error) {
+        //TODO const user = updateUser()  modifier token est date du token
+      }
+      
+    })
+})
+
+
 
 //======= User ======
 
@@ -47,6 +81,7 @@ app.post("/api/update-user/:username", async function (req, res){
   //met à jour un utilisateur
   const username = req.params.username;
   const isAd = req.body.isAdmin;
+  console.log(isAd);
   const user = await updateUser(username, isAd);
   console.log(user);
   res.json(user);
@@ -84,10 +119,9 @@ app.get("/api/get-quote/:id", async function (req, res){
 
 app.post("/api/create-quote", async function (req, res){
     //crée une citation
-    const idq = req.body.id;
     const cont = req.body.content;
     const author = req.body.authorId;
-    const quote = await createQuote(idq, cont, author);
+    const quote = await createQuote(cont, author);
     console.log(quote);
     console.log(idq);
     console.log(cont);
@@ -127,10 +161,9 @@ app.delete("/api/delete-quote/:id", async function(req, res){
 
 app.post("/api/create-favorite", async function (req, res){
   //creation of Favorite
-  const idfav = req.body.id;
   const quote = req.body.quoteId;
   const user = req.body.userId;
-  const favorite = await createFavorite(idfav, quote, user);
+  const favorite = await createFavorite(quote, user);
   //phase de test (a suppr plus tard)
   console.log(favorite);
   console.log(idfav);
@@ -181,3 +214,4 @@ app.get("*", (req, res) => {
     }
   });
 });
+

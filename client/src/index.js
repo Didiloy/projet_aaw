@@ -10,7 +10,7 @@ const AppRouting = () => (
   <Router>
     <Routes>
       <Route exact path="/" element={<App />} />
-      <Route exact path="/citations" element={<Citations />} />
+      <Route exact path="/citations" element={<App />} />
       <Route exact path="/login" element={<Login />} />
     </Routes>
   </Router>
