@@ -29,8 +29,8 @@ async function updateUser(usern, tok, datetok, isAd) {
     },
     data: {
       isAdmin: isAd,
-      token : tok,
-      tokenCreation : datetok,
+      token: tok,
+      tokenCreation: datetok,
     },
   });
 }
@@ -49,7 +49,7 @@ async function createQuote(cont, author) {
   return await prisma.quote.create({
     data: {
       content: cont,
-      authorId: author.username,
+      authorId: author,
     },
   });
 }

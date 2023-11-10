@@ -1,8 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "../components/Nav";
 import Citation from "../components/Citation";
 export default function Citations() {
   let [citation_to_add, set_citation_to_add] = useState("");
+  let [all_citations, set_all_citations] = useState([]);
+  let id = 0;
+  useEffect(() => {
+    fetch("/api/get-quotes")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        set_all_citations(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+
   const modifyCitation = (event) => {
     set_citation_to_add(event.target.value);
   };
@@ -19,14 +33,19 @@ export default function Citations() {
       //make sure to serialize your JSON body
       body: JSON.stringify({
         content: citation_to_add,
-        authorId: 1,
+        authorId: "test",
       }),
     })
       .then((response) => {
         //do something awesome that makes the world a better place
-        modifyCitation("");
+        set_citation_to_add("");
+        response.json().then((data) => {
+          console.log(data);
+        });
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -72,19 +91,17 @@ export default function Citations() {
               overflowY: "scroll",
             }}
           >
-            {/* boucle for avec les citations */}
-            <Citation
-              isAdmin={false}
-              citation="Citation 1"
-              number="1"
-              author="Auteur 1"
-            />
-            <Citation
-              isAdmin={true}
-              citation="Citation 2"
-              number="2"
-              author="Auteur 2"
-            />
+            {all_citations.map((citation) => {
+              id++;
+              return (
+                <Citation
+                  isAdmin={true}
+                  citation={citation.content}
+                  number={citation.id}
+                  author={citation.authorId}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
