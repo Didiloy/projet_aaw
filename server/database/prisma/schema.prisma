@@ -8,26 +8,27 @@ generator client {
 }
 
 model User {
-  username      String   @id 
+  username      String     @id
+  discordId     String
   token         String
   isAdmin       Boolean
-  tokenCreation DateTime @default(now())
+  tokenCreation DateTime   @default(now())
   quote         Quote[]
   favorite      Favorite[]
 }
 
 model Quote {
-  id            Int      @id @default(autoincrement())
-  content       String
-  authorId      String
-  author        User     @relation(fields: [authorId], references: [username])
-  favorite      Favorite[]
+  id       Int        @id @default(autoincrement())
+  content  String
+  authorId String
+  author   User       @relation(fields: [authorId], references: [username])
+  favorite Favorite[]
 }
 
 model Favorite {
-  id            Int      @id @default(autoincrement())
-  userId        String
-  user          User     @relation(fields: [userId], references: [username])
-  quoteId       Int
-  quote         Quote    @relation(fields: [quoteId], references: [id])
+  id      Int    @id @default(autoincrement())
+  userId  String
+  user    User   @relation(fields: [userId], references: [username])
+  quoteId Int
+  quote   Quote  @relation(fields: [quoteId], references: [id])
 }
