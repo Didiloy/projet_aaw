@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const { sign, verify } = require("jsonwebtoken");
 require("dotenv").config();
 const {
   readUser,
@@ -16,18 +18,10 @@ const {
   readFavorite,
   updateFavorite,
   deleteFavorite,
+  selectUserWhere,
+  updateUserFromDiscordId,
 } = require("./database/script.js");
 const port = process.env.PORT || 3000;
-// const Discord = require("discord.js");
-// const client = new Discord.Client();
-
-// client.on("ready", () => {
-//   console.log(`le bot a démarrer`); // On affiche un message de log dans la console (ligne de commande), lorsque le bot est démarré
-// });
-
-// client.on("error", console.error); // Afficher les erreurs
-
-// client.login(BOT_TOKEN);
 
 app.listen(port, () => {
   console.log(`The app server is running on port: ${port}`);
@@ -40,39 +34,142 @@ const HTML_FILE = path.join(
   "index.html"
 );
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.static(DIST_DIR));
 app.use(express.static(PUBLIC_DIR));
+app.use(cookieParser());
 
-app.connect(port, async function (req, res) {
-  const accessToken = req.params.accessToken;
-  const tokenType = req.params.tokenType;
+// app.connect(port, async function (req, res) {
+//   const accessToken = req.params.accessToken;
+//   const tokenType = req.params.tokenType;
 
-  fetch("https://discord.com/api/users/@me", {
+//   fetch("https://discord.com/api/users/@me", {
+//     headers: {
+//       authorization: `${tokenType} ${accessToken}`,
+//     },
+//   })
+//     .then((result) => result.json())
+//     .then((response) => {
+//       const { username, discriminator } = response;
+//       try {
+//         const create = createUser(
+//           username + "#" + discriminator,
+//           tokenType + accessToken
+//         );
+//       } catch (error) {
+//         readUser(username + "#" + discriminator).then((result) => {
+//           const user2 = updateUser(
+//             username + "#" + discriminator,
+//             tokenType + accessToken,
+//             Date.now(),
+//             result.isAdmin
+//           );
+//         });
+//       }
+//     });
+// });
+
+//=======Authentication=======
+app.get("/auth/discord/login", async (req, res) => {
+  const url =
+    "https://discord.com/api/oauth2/authorize?client_id=1172524572537532529&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fdiscord%2Fcallback&response_type=code&scope=identify";
+  res.redirect(url);
+});
+
+app.get("/auth/discord/callback", async (req, res) => {
+  if (!req.query.code) throw new Error("Code not provided.");
+
+  const { code } = req.query;
+  console.log("code: " + code);
+  const params = new URLSearchParams({
+    client_id: process.env.DISCORD_CLIENT_ID,
+    client_secret: process.env.DISCORD_CLIENT_SECRET,
+    grant_type: "authorization_code",
+    code,
+    redirect_uri: process.env.DISCORD_REDIRECT_URI,
+  });
+
+  const headers = {
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Accept-Encoding": "application/x-www-form-urlencoded",
+  };
+
+  const response_raw = await fetch("https://discord.com/api/oauth2/token", {
+    method: "POST",
+    body: params,
+    headers: headers,
+  });
+  const response = await response_raw.json();
+
+  const user_response_raw = await fetch("https://discord.com/api/users/@me", {
+    method: "GET",
     headers: {
-      authorization: `${tokenType} ${accessToken}`,
+      Authorization: `Bearer ${response.access_token}`,
+      ...headers,
     },
-  })
-    .then((result) => result.json())
-    .then((response) => {
-      const { username, discriminator } = response;
-      try {
-        const create = createUser(
-          username + "#" + discriminator,
-          tokenType + accessToken
-        );
-      } catch (error) {
-        readUser(username + "#" + discriminator).then((result) => {
-          const user2 = updateUser(
-            username + "#" + discriminator,
-            tokenType + accessToken,
-            Date.now(),
-            result.isAdmin
-          );
-        });
-      }
+  });
+  const userResponse = await user_response_raw.json();
+
+  const { id, username } = userResponse;
+
+  const checkIfUserExists = await selectUserWhere({ discordId: id });
+
+  if (checkIfUserExists) {
+    const oldUsername = checkIfUserExists[0].username;
+    await updateUserFromDiscordId(id, oldUsername, (tok = ""), false, username);
+  } else {
+    try {
+      await createUser(username, (tok = ""), id, false);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const token = await sign({ sub: id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+
+  var cookie = req.cookies.projet_aaw_token;
+  if (cookie === undefined) {
+    res.cookie("projet_aaw_token", token, {
+      maxAge: 7 * 24 * 3600 * 1000,
+      httpOnly: true,
     });
+  } else {
+    res.cookie("projet_aaw_token", token);
+    console.log("cookie exists", cookie);
+  }
+  res.redirect(process.env.CLIENT_REDIRECT_URL);
+});
+
+app.get("/api/is-authenticated", async (req, res) => {
+  const token = req.cookies.projet_aaw_token;
+  console.log("token: " + token);
+
+  if (token === undefined) {
+    console.log("token undefind");
+    res.json({ isAuthenticated: false });
+  } else {
+    try {
+      const { sub } = await verify(token, process.env.JWT_SECRET);
+      const user = await selectUserWhere({ discordId: sub });
+      res.json({
+        isAuthenticated: true,
+        user: {
+          username: user[0].username,
+          isAdmin: user[0].isAdmin,
+        },
+      });
+    } catch (e) {
+      console.log("error: " + e);
+      res.json({ isAuthenticated: false });
+    }
+  }
 });
 
 //======= User ======

@@ -3,6 +3,11 @@ export default function Hero(props) {
   function goToCitations() {
     window.location.href = "/citations";
   }
+
+  function goToLogIn() {
+    console.log("goToLogIn");
+    window.location.href = "/auth/discord/login";
+  }
   return (
     <div className="hero">
       {props.isConnected ? (
@@ -12,7 +17,8 @@ export default function Hero(props) {
           </h1>
           <div className="col-lg-6 mx-auto">
             <p className="lead mb-4">
-              Vous êtes connecté. Ajoutez ou lisez des citations.
+              Vous êtes connecté en tant que <b>{props.username}</b>. Ajoutez ou
+              lisez des citations.
             </p>
             <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
               <button
@@ -37,29 +43,13 @@ export default function Hero(props) {
             </p>
           </div>
           <div className="col-md-10 mx-auto col-lg-5 px-5">
-            <form className="p-4 p-md-5 border rounded-3 bg-body-tertiary">
-              {/* <div className="form-floating mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="floatingInput"
-                  placeholder="username"
-                />
-                <label for="floatingInput">Discord username</label>
-              </div>
-              <div className="form-floating mb-3">
-                <input
-                  type="password"
-                  className="form-control"
-                  id="floatingPassword"
-                  placeholder="Password"
-                />
-                <label for="floatingPassword">Password</label>
-              </div> */}
-              <button className="w-100 btn btn-lg btn-primary" type="submit">
-                Login with Discord
-              </button>
-            </form>
+            <button
+              className="w-100 btn btn-lg btn-primary"
+              type="submit"
+              onClick={goToLogIn}
+            >
+              Login with Discord
+            </button>
           </div>
         </div>
       )}
