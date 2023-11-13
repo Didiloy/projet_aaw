@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
+import { UserContext } from ".";
 
 const App = () => {
   let [isAuthenticated, setIsAuthenticated] = useState(false);
-  let [username, setUsername] = useState("");
   let [isAdmin, setIsAdmin] = useState(false);
+  const { user, setUser } = useContext(UserContext);
+  function setUsername(u) {
+    setUser(u);
+  }
 
   async function isConnected() {
     await fetch("/api/is-authenticated")
@@ -27,9 +31,8 @@ const App = () => {
   return (
     <div>
       <Nav />
-      <Hero isConnected={isAuthenticated} username={username} />
+      <Hero isConnected={isAuthenticated} />
     </div>
   );
 };
-
 export default App;

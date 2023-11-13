@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
+import { UserContext } from "..";
 export default function Hero(props) {
+  const { user, setUser } = useContext(UserContext);
   function goToCitations() {
     window.location.href = "/citations";
   }
@@ -17,8 +19,8 @@ export default function Hero(props) {
           </h1>
           <div className="col-lg-6 mx-auto">
             <p className="lead mb-4">
-              Vous êtes connecté en tant que <b>{props.username}</b>. Ajoutez ou
-              lisez des citations.
+              Vous êtes connecté en tant que <b>{user}</b>. Ajoutez ou lisez des
+              citations.
             </p>
             <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
               <button

@@ -242,10 +242,9 @@ app.post("/api/create-quote", async function (req, res) {
   //crée une citation
   const cont = req.body.content;
   const author = req.body.authorId;
+  console.log("author: " + author);
+  console.log("cont: " + cont);
   const quote = await createQuote(cont, author);
-  console.log(quote);
-  console.log(cont);
-  console.log(author);
   res.json(quote);
 });
 
