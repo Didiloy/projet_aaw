@@ -187,7 +187,7 @@ app.post("/api/create-favorite", async function (req, res) {
   const favorite = await createFavorite(quote, user);
   //phase de test (a suppr plus tard)
   console.log(favorite);
-  console.log(idfav);
+  //console.log(idfav);
   console.log(quote);
   console.log(user);
 
