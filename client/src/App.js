@@ -6,7 +6,8 @@ import { UserContext } from ".";
 const App = () => {
   let [isAuthenticated, setIsAuthenticated] = useState(false);
   let [isAdmin, setIsAdmin] = useState(false);
-  const { user, setUser } = useContext(UserContext);
+  const [user, setUser] = useContext(UserContext);
+  console.log("User:", user);
   function setUsername(u) {
     setUser(u);
   }

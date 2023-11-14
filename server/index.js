@@ -119,7 +119,7 @@ app.get("/auth/discord/callback", async (req, res) => {
 
   const checkIfUserExists = await selectUserWhere({ discordId: id });
 
-  if (checkIfUserExists) {
+  if (checkIfUserExists.length > 0) {
     const oldUsername = checkIfUserExists[0].username;
     await updateUserFromDiscordId(id, oldUsername, (tok = ""), false, username);
   } else {
@@ -149,10 +149,8 @@ app.get("/auth/discord/callback", async (req, res) => {
 
 app.get("/api/is-authenticated", async (req, res) => {
   const token = req.cookies.projet_aaw_token;
-  console.log("token: " + token);
 
   if (token === undefined) {
-    console.log("token undefind");
     res.json({ isAuthenticated: false });
   } else {
     try {

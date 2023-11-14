@@ -1,7 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import { UserContext } from "..";
 export default function Hero(props) {
-  const { user, setUser } = useContext(UserContext);
+  const [user, setUser] = useContext(UserContext);
+  console.log("User:", user);
   function goToCitations() {
     window.location.href = "/citations";
   }

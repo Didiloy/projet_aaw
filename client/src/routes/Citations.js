@@ -3,10 +3,12 @@ import { UserContext } from "..";
 import Nav from "../components/Nav";
 import Citation from "../components/Citation";
 export default function Citations() {
-  const { user, setUser } = useContext(UserContext);
+  const [user] = useContext(UserContext);
   let [citation_to_add, set_citation_to_add] = useState("");
   let [all_citations, set_all_citations] = useState([]);
   let id = 0;
+  console.log("User: " + user);
+
   const fetch_all_citations = () => {
     fetch("/api/get-quotes")
       .then((response) => response.json())
@@ -29,6 +31,7 @@ export default function Citations() {
   };
 
   const handleSubmit = (event) => {
+    console.log("user: " + user);
     event.preventDefault();
     fetch("/api/create-quote", {
       method: "post",
