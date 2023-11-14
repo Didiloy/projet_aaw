@@ -4,11 +4,12 @@ const prisma = new PrismaClient();
 
 //=========crud User==========
 
-async function createUser(usern, tok, isAd = false) {
+async function createUser(usern, tok, discordId, isAd = false) {
   return await prisma.user.create({
     data: {
       username: usern,
       token: tok,
+      discordId: discordId,
       isAdmin: isAd,
     },
   });
@@ -18,6 +19,32 @@ async function readUser(usern) {
   return await prisma.user.findUnique({
     where: {
       username: usern,
+    },
+  });
+}
+
+async function selectUserWhere(whereObject) {
+  return await prisma.user.findMany({
+    where: whereObject,
+  });
+}
+
+async function updateUserFromDiscordId(
+  discordId,
+  usern,
+  tok,
+  isAd,
+  newUsername = ""
+) {
+  return await prisma.user.update({
+    where: {
+      discordId: discordId,
+      username: usern,
+    },
+    data: {
+      username: newUsername || usern,
+      isAdmin: isAd,
+      token: tok,
     },
   });
 }
@@ -65,8 +92,6 @@ async function readQuote(idq) {
 async function readAllQuotes() {
   return await prisma.quote.findMany();
 }
-
-
 
 async function updateQuote(idq, cont, author) {
   return await prisma.quote.update({
@@ -141,4 +166,6 @@ module.exports = {
   readFavorite,
   updateFavorite,
   deleteFavorite,
+  selectUserWhere,
+  updateUserFromDiscordId,
 };

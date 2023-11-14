@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "..";
 import Nav from "../components/Nav";
 import Citation from "../components/Citation";
 export default function Citations() {
+  const { user, setUser } = useContext(UserContext);
   let [citation_to_add, set_citation_to_add] = useState("");
   let [all_citations, set_all_citations] = useState([]);
   let id = 0;
@@ -38,7 +40,7 @@ export default function Citations() {
       //make sure to serialize your JSON body
       body: JSON.stringify({
         content: citation_to_add,
-        authorId: "test",
+        authorId: user, //TODO
       }),
     })
       .then((response) => {

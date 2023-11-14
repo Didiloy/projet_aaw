@@ -1,6 +1,7 @@
 -- CreateTable
 CREATE TABLE "User" (
     "username" TEXT NOT NULL PRIMARY KEY,
+    "discordId" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "isAdmin" BOOLEAN NOT NULL,
     "tokenCreation" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
