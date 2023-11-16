@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
-import { UserContext } from "..";
+import React, { useState, useEffect } from "react";
 import Nav from "../components/Nav";
 import Citation from "../components/Citation";
+import { useSelector } from "react-redux";
 export default function Citations() {
-  const [user] = useContext(UserContext);
   let [citation_to_add, set_citation_to_add] = useState("");
   let [all_citations, set_all_citations] = useState([]);
   let id = 0;
-  console.log("User: " + user);
+
+  const username = useSelector((state) => state.username);
 
   const fetch_all_citations = () => {
     fetch("/api/get-quotes")
@@ -31,7 +31,6 @@ export default function Citations() {
   };
 
   const handleSubmit = (event) => {
-    console.log("user: " + user);
     event.preventDefault();
     fetch("/api/create-quote", {
       method: "post",
@@ -43,7 +42,7 @@ export default function Citations() {
       //make sure to serialize your JSON body
       body: JSON.stringify({
         content: citation_to_add,
-        authorId: user, //TODO
+        authorId: username,
       }),
     })
       .then((response) => {
@@ -106,6 +105,7 @@ export default function Citations() {
               id++;
               return (
                 <Citation
+                  key={id}
                   isAdmin={false}
                   citation={citation.content}
                   number={citation.id}

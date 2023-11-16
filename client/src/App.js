@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
-import { UserContext } from ".";
+import { useSelector, useDispatch } from "react-redux";
+import { changeUsername } from "./store";
 
 const App = () => {
   let [isAuthenticated, setIsAuthenticated] = useState(false);
   let [isAdmin, setIsAdmin] = useState(false);
-  const [user, setUser] = useContext(UserContext);
-  console.log("User:", user);
-  function setUsername(u) {
-    setUser(u);
-  }
+  const dispatch = useDispatch();
+  const username = useSelector((state) => state.username);
+
+  const handleUpdateUsername = (newUsername) => {
+    dispatch(changeUsername(newUsername));
+  };
 
   async function isConnected() {
     await fetch("/api/is-authenticated")
@@ -18,7 +20,7 @@ const App = () => {
       .then((data) => {
         //Il faut set les autre state avec isAuthenticated pck react redessine les composant
         if (data.isAuthenticated) {
-          setUsername(data.user.username);
+          handleUpdateUsername(data.user.username);
           setIsAdmin(data.user.isAdmin);
         }
         setIsAuthenticated(data.isAuthenticated);
@@ -36,4 +38,5 @@ const App = () => {
     </div>
   );
 };
+
 export default App;
