@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import App from "./App.js"; //homepage
 import Citations from "./routes/Citations.js";
+import AdminPanel from "./routes/AdminPanel.js";
 import { store } from "./store.js";
 import Nav from "./components/Nav.js";
 import { Outlet } from "react-router-dom";
@@ -25,6 +26,7 @@ const AppRouting = () => {
           <Route path="/" element={<Layout />}>
             <Route exact path="/" element={<App />} />
             <Route exact path="/citations" element={<Citations />} />
+            <Route exact path="/admin-panel" element={<AdminPanel />} />
           </Route>
         </Routes>
       </Router>

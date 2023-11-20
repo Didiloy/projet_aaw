@@ -4,6 +4,10 @@ const prisma = new PrismaClient();
 
 //=========crud User==========
 
+async function getAllUsers() {
+  return await prisma.user.findMany();
+}
+
 async function createUser(usern, tok, discordId, isAd = false) {
   return await prisma.user.create({
     data: {
@@ -49,15 +53,13 @@ async function updateUserFromDiscordId(
   });
 }
 
-async function updateUser(usern, tok, datetok, isAd) {
+async function updateUser(usern, isAd) {
   return await prisma.user.update({
     where: {
       username: usern,
     },
     data: {
       isAdmin: isAd,
-      token: tok,
-      tokenCreation: datetok,
     },
   });
 }
@@ -153,6 +155,7 @@ async function deleteFavorite(idf) {
 }
 
 module.exports = {
+  getAllUsers,
   createUser,
   readUser,
   updateUser,

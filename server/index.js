@@ -6,8 +6,10 @@ const cookieParser = require("cookie-parser");
 const { sign, verify } = require("jsonwebtoken");
 require("dotenv").config();
 const {
+  getAllUsers,
   readUser,
   createUser,
+  updateUser,
   deleteUser,
   createQuote,
   readQuote,
@@ -142,6 +144,11 @@ app.get("/api/is-authenticated", async (req, res) => {
 
 //======= User ======
 
+app.get("/api/get-all-users", async function (req, res) {
+  const users = await getAllUsers();
+  res.json(users);
+});
+
 app.get("/api/get-user/:username", async function (req, res) {
   //donne un utilisateur
   const usern = req.params.username;
@@ -164,12 +171,11 @@ app.post("/api/create-user", async function (req, res) {
 app.post("/api/update-user/:username", async function (req, res) {
   //met à jour un utilisateur
   const username = req.params.username;
-  const tok = req.body.token;
-  const datetok = req.body.tokenCreation;
   const isAd = req.body.isAdmin;
-  console.log(isAd);
-  const user = await updateUser(username, tok, datetok, isAd);
-  console.log(user);
+  console.log("username: " + username);
+  console.log("isAd: " + isAd);
+  const user = await updateUser(username, isAd);
+  console.log("updated: " + user);
   res.json(user);
 });
 
