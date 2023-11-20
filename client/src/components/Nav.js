@@ -6,7 +6,9 @@ export default function Nav() {
       .then((res) => res.json())
       .then((data) => {
         //Il faut set les autre state avec isAuthenticated pck react redessine les composant
-        setIsAdmin(data.user.isAdmin);
+        if (data.isAuthenticated) {
+          setIsAdmin(data.user.isAdmin);
+        }
       });
   }
 

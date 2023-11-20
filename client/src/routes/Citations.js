@@ -6,12 +6,16 @@ export default function Citations() {
   let [all_citations, set_all_citations] = useState([]);
   let id = 0;
   let [isAdmin, setIsAdmin] = useState(false);
-  async function verifyIsAdmin() {
+  let [isAuthenticated, setIsAuthenticated] = useState(false);
+  async function verifyUserInfos() {
     await fetch("/api/is-authenticated")
       .then((res) => res.json())
       .then((data) => {
         //Il faut set les autre state avec isAuthenticated pck react redessine les composant
-        setIsAdmin(data.user.isAdmin);
+        setIsAuthenticated(data.isAuthenticated);
+        if (data.isAuthenticated) {
+          setIsAdmin(data.user.isAdmin);
+        }
       });
   }
 
@@ -30,7 +34,7 @@ export default function Citations() {
   };
   useEffect(() => {
     fetch_all_citations();
-    verifyIsAdmin();
+    verifyUserInfos();
   }, []);
 
   const modifyCitation = (event) => {
@@ -81,32 +85,38 @@ export default function Citations() {
             <h1>Citations</h1>
           </div>
         </div>
-        <div className="row d-flex flex-row">
-          <div
-            className="col-12 mb-3"
-            style={{
-              width: "100%",
-            }}
-          >
-            <form
-              onSubmit={handleSubmit}
-              className="d-flex flex-row justify-content-between align-item-between"
-              role="search"
+        {isAuthenticated ? (
+          <div className="row d-flex flex-row">
+            <div
+              className="col-12 mb-3"
+              style={{
+                width: "100%",
+              }}
             >
-              <input
-                type="search"
-                className="form-control form-control-light text-bg-light"
-                placeholder="Ajouter une citation.."
-                aria-label="Add a citation"
-                onChange={modifyCitation}
-                value={citation_to_add}
-              />
-              <button type="submit" className="btn btn-primary ms-5">
-                Ajouter
-              </button>
-            </form>
+              <form
+                onSubmit={handleSubmit}
+                className="d-flex flex-row justify-content-between align-item-between"
+                role="search"
+              >
+                <input
+                  type="search"
+                  className="form-control form-control-light text-bg-light"
+                  placeholder="Ajouter une citation.."
+                  aria-label="Add a citation"
+                  onChange={modifyCitation}
+                  value={citation_to_add}
+                />
+                <button type="submit" className="btn btn-primary ms-5">
+                  Ajouter
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="d-flex flex-row justify-content-center align-item-center">
+            <h3>Connectez vous pour ajouter une citation !</h3>
+          </div>
+        )}
         <div className="row">
           {all_citations.map((citation) => {
             id++;
