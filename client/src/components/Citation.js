@@ -1,14 +1,26 @@
 import React, { useState } from "react";
 export default function Citation(props) {
   const { citation, isAdmin, author } = props;
-  const isEven = props.number % 2 === 0;
+  const isEven = props.isEven;
   const backgroundColor = isEven ? "bg-secondary-subtle" : "bg-primary-subtle";
   const rounded_top = props.rounded_top ? "rounded-top" : "";
-  const rounded_bottom = props.rounded_bottom ? "rounded-bottom" : "";
+  const rounded_bottom = props.rounded_bottom ? "rounded-bottom mb-5" : "";
   const css_class_name = `${backgroundColor} ${rounded_top} ${rounded_bottom}`;
   console.log(citation);
 
-  const handleDelete = (event) => {};
+  const handleDelete = async (event) => {
+    event.preventDefault();
+    await fetch("/api/delete-quote/" + props.number, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        props.deleteCitation(props.number);
+      })
+      .catch((err) => {
+        console.log("err: " + err);
+      });
+  };
 
   return (
     <div className={css_class_name} style={{ width: "100%", height: "auto" }}>

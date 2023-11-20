@@ -228,7 +228,8 @@ app.post("/api/update-quote/:id", async function (req, res) {
 
 app.delete("/api/delete-quote/:id", async function (req, res) {
   //supprime une citation
-  const idq = req.params.id;
+  console.log("delete quote");
+  const idq = Number(req.params.id);
   const response = { isDeleted: true };
   try {
     const quote = await deleteQuote(idq);
@@ -237,7 +238,6 @@ app.delete("/api/delete-quote/:id", async function (req, res) {
   } catch (err) {
     response.message = "Error during deleting quote   " + err;
     response.isDeleted = false;
-
     res.status(500).json(response);
   }
 });

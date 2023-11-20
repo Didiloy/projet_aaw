@@ -41,6 +41,10 @@ export default function Citations() {
     }
   };
 
+  const deleteCitation = (citationId) => {
+    set_all_citations(all_citations.filter((c) => c.id !== citationId));
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     fetch("/api/create-quote", {
@@ -104,28 +108,22 @@ export default function Citations() {
           </div>
         </div>
         <div className="row">
-          <div
-            className="col-12 vw-100 mb-3 bg-secondary rounded-2 pt-3"
-            style={{
-              height: "500px",
-              overflowY: "scroll",
-            }}
-          >
-            {all_citations.map((citation) => {
-              id++;
-              return (
-                <Citation
-                  key={id}
-                  isAdmin={isAdmin}
-                  citation={citation.content}
-                  number={citation.id}
-                  author={citation.authorId}
-                  rounded_top={id === 1}
-                  rounded_bottom={id === all_citations.length}
-                />
-              );
-            })}
-          </div>
+          {all_citations.map((citation) => {
+            id++;
+            return (
+              <Citation
+                key={id}
+                isEven={id % 2 === 0}
+                isAdmin={isAdmin}
+                citation={citation.content}
+                number={citation.id}
+                author={citation.authorId}
+                rounded_top={id === 1}
+                rounded_bottom={id === all_citations.length}
+                deleteCitation={deleteCitation}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
