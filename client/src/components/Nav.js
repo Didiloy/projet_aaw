@@ -1,5 +1,18 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 export default function Nav() {
+  let [isAdmin, setIsAdmin] = useState(false);
+  async function verifyIsAdmin() {
+    await fetch("/api/is-authenticated")
+      .then((res) => res.json())
+      .then((data) => {
+        //Il faut set les autre state avec isAuthenticated pck react redessine les composant
+        setIsAdmin(data.user.isAdmin);
+      });
+  }
+
+  useEffect(() => {
+    verifyIsAdmin();
+  }, []);
   return (
     <nav className="navbar navbar-expand-lg bg-secondary">
       <div className="container-fluid">
@@ -13,6 +26,13 @@ export default function Nav() {
                 Citations
               </a>
             </li>
+            {isAdmin && (
+              <li className="nav-item">
+                <a className="nav-link text-light" href="/admin-panel">
+                  Admin Panel
+                </a>
+              </li>
+            )}
           </ul>
           <form
             className="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"

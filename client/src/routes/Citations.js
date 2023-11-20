@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
-import Nav from "../components/Nav";
 import Citation from "../components/Citation";
 import { useSelector } from "react-redux";
 export default function Citations() {
   let [citation_to_add, set_citation_to_add] = useState("");
   let [all_citations, set_all_citations] = useState([]);
   let id = 0;
+  let [isAdmin, setIsAdmin] = useState(false);
+  async function verifyIsAdmin() {
+    await fetch("/api/is-authenticated")
+      .then((res) => res.json())
+      .then((data) => {
+        //Il faut set les autre state avec isAuthenticated pck react redessine les composant
+        setIsAdmin(data.user.isAdmin);
+      });
+  }
 
   const username = useSelector((state) => state.username);
 
@@ -20,7 +28,10 @@ export default function Citations() {
         console.log(err);
       });
   };
-  useEffect(fetch_all_citations, []);
+  useEffect(() => {
+    fetch_all_citations();
+    verifyIsAdmin();
+  }, []);
 
   const modifyCitation = (event) => {
     if (event.key === "Enter") {
@@ -60,7 +71,6 @@ export default function Citations() {
 
   return (
     <div>
-      <Nav />
       <div className="container">
         <div className="row">
           <div className="col-12 d-flex justify-content-center">
@@ -95,9 +105,9 @@ export default function Citations() {
         </div>
         <div className="row">
           <div
-            className="col-12 vw-100 mb-3 bg-secondary rounded-2"
+            className="col-12 vw-100 mb-3 bg-secondary rounded-2 pt-3"
             style={{
-              height: "450px",
+              height: "500px",
               overflowY: "scroll",
             }}
           >
@@ -106,10 +116,12 @@ export default function Citations() {
               return (
                 <Citation
                   key={id}
-                  isAdmin={false}
+                  isAdmin={isAdmin}
                   citation={citation.content}
                   number={citation.id}
                   author={citation.authorId}
+                  rounded_top={id === 1}
+                  rounded_bottom={id === all_citations.length}
                 />
               );
             })}

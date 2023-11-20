@@ -33,7 +33,6 @@ const App = () => {
 
   return (
     <div>
-      <Nav />
       <Hero isConnected={isAuthenticated} />
     </div>
   );

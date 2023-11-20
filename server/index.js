@@ -44,36 +44,6 @@ app.use(express.static(DIST_DIR));
 app.use(express.static(PUBLIC_DIR));
 app.use(cookieParser());
 
-// app.connect(port, async function (req, res) {
-//   const accessToken = req.params.accessToken;
-//   const tokenType = req.params.tokenType;
-
-//   fetch("https://discord.com/api/users/@me", {
-//     headers: {
-//       authorization: `${tokenType} ${accessToken}`,
-//     },
-//   })
-//     .then((result) => result.json())
-//     .then((response) => {
-//       const { username, discriminator } = response;
-//       try {
-//         const create = createUser(
-//           username + "#" + discriminator,
-//           tokenType + accessToken
-//         );
-//       } catch (error) {
-//         readUser(username + "#" + discriminator).then((result) => {
-//           const user2 = updateUser(
-//             username + "#" + discriminator,
-//             tokenType + accessToken,
-//             Date.now(),
-//             result.isAdmin
-//           );
-//         });
-//       }
-//     });
-// });
-
 //=======Authentication=======
 app.get("/auth/discord/login", async (req, res) => {
   const url =
