@@ -123,11 +123,13 @@ export default function Citations() {
             return (
               <Citation
                 key={id}
+                id={id}
                 isEven={id % 2 === 0}
                 isAdmin={isAdmin}
                 citation={citation.content}
                 number={citation.id}
                 author={citation.authorId}
+                creation_date={citation.creation_date}
                 rounded_top={id === 1}
                 rounded_bottom={id === all_citations.length}
                 deleteCitation={deleteCitation}
