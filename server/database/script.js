@@ -117,39 +117,30 @@ async function deleteQuote(idq) {
 
 //========= crud Favorite =============
 
-async function createFavorite(quote, user) {
+async function createFavorite(user, quote) {
   return await prisma.favorite.create({
     data: {
-      userId: user, //string
-      quoteId: quote, //int
+      userId: user,
+      quoteId: quote,
     },
   });
 }
 
-async function readFavorite(idf) {
-  return await prisma.favorite.findUnique({
+async function getUserFavorites(username) {
+  return await prisma.favorite.findMany({
     where: {
-      id: idf,
+      userId: username,
     },
   });
 }
 
-async function updateFavorite(idf, quote, user) {
-  return await prisma.favorite.update({
-    where: {
-      id: idf,
-    },
-    data: {
-      userId: user, //string
-      quoteId: quote, //int
-    },
-  });
-}
-
-async function deleteFavorite(idf) {
+async function deleteFavorite(username, quote) {
   return await prisma.favorite.delete({
     where: {
-      id: idf,
+      userId_quoteId: {
+        userId: username,
+        quoteId: quote,
+      },
     },
   });
 }
@@ -166,8 +157,7 @@ module.exports = {
   updateQuote,
   deleteQuote,
   createFavorite,
-  readFavorite,
-  updateFavorite,
+  getUserFavorites,
   deleteFavorite,
   selectUserWhere,
   updateUserFromDiscordId,

@@ -22,10 +22,10 @@ const {
   deleteFavorite,
   selectUserWhere,
   updateUserFromDiscordId,
+  getUserFavorites,
 } = require("./database/script.js");
 //const bot = require("./bot.js")
 const port = process.env.PORT || 3000;
-
 
 app.listen(port, () => {
   console.log(`The app server is running on port: ${port}`);
@@ -254,9 +254,9 @@ app.delete("/api/delete-quote/:id", async function (req, res) {
 
 app.post("/api/create-favorite", async function (req, res) {
   //creation of Favorite
-  const quote = req.body.quoteId;
+  const quote = parseInt(req.body.quoteId);
   const user = req.body.userId;
-  const favorite = await createFavorite(quote, user);
+  const favorite = await createFavorite(user, quote);
   //phase de test (a suppr plus tard)
   console.log(favorite);
   //console.log(idfav);
@@ -266,30 +266,19 @@ app.post("/api/create-favorite", async function (req, res) {
   res.json(favorite);
 });
 
-app.get("/api/get-favorite/:id", async function (req, res) {
-  //read favorite
-  const id = req.params.id;
-  const favorite = await readFavorite(id);
-  console.log(favorite);
-  res.json(favorite);
+app.get("/api/get-favorites/:username", async function (req, res) {
+  const username = req.params.username;
+  const favorites = await getUserFavorites(username);
+  res.json(favorites);
 });
 
-app.post("/api/update-favorite/:id", async function (req, res) {
-  //update favorite
-  const id = req.params.id;
-  const quote = req.body.quoteId;
-  const user = req.body.userId;
-  const favorite = await updateFavorite(id, quote, user);
-  console.log(favorite);
-  res.json(favorite);
-});
-
-app.delete("/api/delete-favorite/:id", async function (req, res) {
+app.delete("/api/delete-favorite/:username/:quote", async function (req, res) {
   //delete favorite
-  const idfav = req.params.id;
+  const username = req.params.username;
+  const quoteId = parseInt(req.params.quote);
   const response = { isDeleted: true };
   try {
-    const favorite = await deleteFavorite(idfav);
+    const favorite = await deleteFavorite(username, quoteId);
     response.message = "Succeed in deleting Favorite !";
     res.status(200).json(response);
   } catch (err) {

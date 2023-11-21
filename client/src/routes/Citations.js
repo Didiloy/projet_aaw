@@ -7,6 +7,7 @@ export default function Citations() {
   let id = 0;
   let [isAdmin, setIsAdmin] = useState(false);
   let [isAuthenticated, setIsAuthenticated] = useState(false);
+  let [favorites, setFavorites] = useState([]);
   async function verifyUserInfos() {
     await fetch("/api/is-authenticated")
       .then((res) => res.json())
@@ -21,20 +22,44 @@ export default function Citations() {
 
   const username = useSelector((state) => state.username);
 
-  const fetch_all_citations = () => {
-    fetch("/api/get-quotes")
-      .then((response) => response.json())
+  const fetch_all_citations = async () => {
+    const fetch_all_citations_aux = async () => {
+      fetch("/api/get-quotes")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          set_all_citations(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    await fetch_all_citations_aux();
+  };
+
+  const fetch_favorites = () => {
+    fetch(`/api/get-favorites/${username}`, {
+      method: "GET",
+    })
+      .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        set_all_citations(data);
+        let fav = [];
+        data.map((citation) => {
+          fav.push(citation.quoteId);
+        });
+        setFavorites(fav);
       })
       .catch((err) => {
-        console.log(err);
+        //TODO SHOW ERROR
+        console.log("err fetching favorite:" + err);
       });
   };
+
   useEffect(() => {
     fetch_all_citations();
     verifyUserInfos();
+    fetch_favorites();
   }, []);
 
   const modifyCitation = (event) => {
@@ -133,6 +158,8 @@ export default function Citations() {
                 rounded_top={id === 1}
                 rounded_bottom={id === all_citations.length}
                 deleteCitation={deleteCitation}
+                isAuthenticated={isAuthenticated}
+                isFav={favorites.includes(citation.id)}
               />
             );
           })}

@@ -1,13 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import CitationModal from "./CitationModal";
 export default function Citation(props) {
-  const { citation, isAdmin, author, creation_date, id } = props;
+  const {
+    citation,
+    isAdmin,
+    author,
+    creation_date,
+    id,
+    isAuthenticated,
+    number,
+    isFav,
+  } = props;
+  const username = useSelector((state) => state.username);
   const isEven = props.isEven;
   const backgroundColor = isEven ? "bg-secondary-subtle" : "bg-primary-subtle";
   const rounded_top = props.rounded_top ? "rounded-top" : "";
   const rounded_bottom = props.rounded_bottom ? "rounded-bottom mb-5" : "";
   const css_class_name = `${backgroundColor} ${rounded_top} ${rounded_bottom}`;
-  console.log(citation);
+  const citation_id = number;
+  let [isFavorite, setIsFavorite] = useState(isFav);
+
+  const setFavorite = (event) => {};
+
+  const handleFavorite = async (event) => {
+    event.preventDefault();
+    if (isFavorite) {
+      //delete from favorite
+      await fetch(`/api/delete-favorite/${username}/${citation_id}`, {
+        method: "DELETE",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.isDeleted) setIsFavorite(false);
+          else {
+            setIsFavorite(true);
+            //TODO SHOW ERROR
+            console.log("err deleting favorite:" + data.message);
+          }
+        })
+        .catch((err) => {
+          //TODO SHOW ERROR
+          console.log("err deleting favorite:" + err);
+        });
+    } else {
+      //add to favorite
+      await fetch("/api/create-favorite", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quoteId: citation_id,
+          userId: username,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setIsFavorite(true);
+        })
+        .catch((err) => {
+          //TODO SHOW ERROR
+          console.log("err adding favorite:" + err);
+        });
+    }
+  };
 
   const handleDelete = async (event) => {
     event.preventDefault();
@@ -22,6 +79,10 @@ export default function Citation(props) {
         console.log("err: " + err);
       });
   };
+
+  useEffect(() => {
+    setFavorite();
+  }, []);
 
   return (
     <div className={css_class_name} style={{ width: "100%", height: "auto" }}>
@@ -52,6 +113,27 @@ export default function Citation(props) {
             >
               Voir plus d'infos
             </button>
+            {isAuthenticated ? (
+              isFavorite ? (
+                <button
+                  type="button"
+                  className="btn ms-2 me-2"
+                  onClick={handleFavorite}
+                >
+                  <i className="fa fa-star" aria-hidden="false"></i>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn ms-2 me-2"
+                  onClick={handleFavorite}
+                >
+                  <i className="fa fa-star-o" aria-hidden="false"></i>
+                </button>
+              )
+            ) : (
+              <div />
+            )}
           </div>
         </div>
       </div>
