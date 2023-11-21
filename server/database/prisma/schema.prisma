@@ -18,11 +18,12 @@ model User {
 }
 
 model Quote {
-  id       Int        @id @default(autoincrement())
-  content  String
-  authorId String
-  author   User       @relation(fields: [authorId], references: [username])
-  favorite Favorite[]
+  id            Int        @id @default(autoincrement())
+  content       String
+  authorId      String
+  author        User       @relation(fields: [authorId], references: [username])
+  creation_date DateTime   @default(now())
+  favorite      Favorite[]
 }
 
 model Favorite {
