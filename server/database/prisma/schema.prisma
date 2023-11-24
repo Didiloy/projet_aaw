@@ -21,7 +21,7 @@ model Quote {
   id            Int        @id @default(autoincrement())
   content       String
   authorId      String
-  author        User       @relation(fields: [authorId], references: [username])
+  author        User       @relation(fields: [authorId], references: [username], onUpdate: Cascade)
   creation_date DateTime   @default(now())
   favorite      Favorite[]
 }
@@ -30,7 +30,7 @@ model Favorite {
   userId  String
   user    User   @relation(fields: [userId], references: [username])
   quoteId Int
-  quote   Quote  @relation(fields: [quoteId], references: [id])
+  quote   Quote  @relation(fields: [quoteId], references: [id], onDelete: Cascade)
 
   @@unique([userId, quoteId])
 }
