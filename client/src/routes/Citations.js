@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Citation from "../components/Citation";
 import { useSelector } from "react-redux";
+import CitationsList from "../components/CitationsList";
 export default function Citations() {
   let [citation_to_add, set_citation_to_add] = useState("");
   let [all_citations, set_all_citations] = useState([]);
-  let id = 0;
   let [isAdmin, setIsAdmin] = useState(false);
   let [isAuthenticated, setIsAuthenticated] = useState(false);
-  let [favorites, setFavorites] = useState([]);
+
   async function verifyUserInfos() {
     await fetch("/api/is-authenticated")
       .then((res) => res.json())
@@ -24,6 +23,7 @@ export default function Citations() {
 
   const fetch_all_citations = async () => {
     const fetch_all_citations_aux = async () => {
+      //used to wait for the fetch to finish because it's not possible in useEffect
       fetch("/api/get-quotes")
         .then((response) => response.json())
         .then((data) => {
@@ -37,29 +37,9 @@ export default function Citations() {
     await fetch_all_citations_aux();
   };
 
-  const fetch_favorites = () => {
-    fetch(`/api/get-favorites/${username}`, {
-      method: "GET",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        let fav = [];
-        data.map((citation) => {
-          fav.push(citation.quoteId);
-        });
-        setFavorites(fav);
-      })
-      .catch((err) => {
-        //TODO SHOW ERROR
-        console.log("err fetching favorite:" + err);
-      });
-  };
-
   useEffect(() => {
     fetch_all_citations();
     verifyUserInfos();
-    fetch_favorites();
   }, []);
 
   const modifyCitation = (event) => {
@@ -142,28 +122,12 @@ export default function Citations() {
             <h3>Connectez vous pour ajouter une citation !</h3>
           </div>
         )}
-        <div className="row">
-          {all_citations.map((citation) => {
-            id++;
-            return (
-              <Citation
-                key={id}
-                id={id}
-                isEven={id % 2 === 0}
-                isAdmin={isAdmin}
-                citation={citation.content}
-                number={citation.id}
-                author={citation.authorId}
-                creation_date={citation.creation_date}
-                rounded_top={id === 1}
-                rounded_bottom={id === all_citations.length}
-                deleteCitation={deleteCitation}
-                isAuthenticated={isAuthenticated}
-                isFav={favorites.includes(citation.id)}
-              />
-            );
-          })}
-        </div>
+        <CitationsList
+          all_citations={all_citations}
+          isAdmin={isAdmin}
+          deleteCitation={deleteCitation}
+          isAuthenticated={isAuthenticated}
+        />
       </div>
     </div>
   );

@@ -230,8 +230,6 @@ app.post("/api/create-quote", async function (req, res) {
   //crée une citation
   const cont = req.body.content;
   const author = req.body.authorId;
-  console.log("author: " + author);
-  console.log("cont: " + cont);
   const quote = await createQuote(cont, author);
   res.json(quote);
 });
@@ -253,11 +251,13 @@ app.delete("/api/delete-quote/:id", async function (req, res) {
   const response = { isDeleted: true };
   try {
     const quote = await deleteQuote(idq);
+    console.log("success deleting quote: " + quote);
     response.message = "quote deleted with success ! ";
     res.status(200).json(response);
   } catch (err) {
     response.message = "Error during deleting quote   " + err;
     response.isDeleted = false;
+    console.log("error deleting quote: " + err);
     res.status(500).json(response);
   }
 });
