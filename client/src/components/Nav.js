@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 export default function Nav() {
   let [isAdmin, setIsAdmin] = useState(false);
+  let [isAuthenticated, setIsAuthenticated] = useState(false);
   async function verifyIsAdmin() {
     await fetch("/api/is-authenticated")
       .then((res) => res.json())
@@ -8,6 +9,7 @@ export default function Nav() {
         //Il faut set les autre state avec isAuthenticated pck react redessine les composant
         if (data.isAuthenticated) {
           setIsAdmin(data.user.isAdmin);
+          setIsAuthenticated(data.isAuthenticated);
         }
       });
   }
@@ -28,6 +30,13 @@ export default function Nav() {
                 Citations
               </a>
             </li>
+            {isAuthenticated && (
+              <li className="nav-item">
+                <a className="nav-link text-light" href="/favorites">
+                  Favoris
+                </a>
+              </li>
+            )}
             {isAdmin && (
               <li className="nav-item">
                 <a className="nav-link text-light" href="/admin-panel">

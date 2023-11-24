@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import App from "./App.js"; //homepage
 import Citations from "./routes/Citations.js";
 import AdminPanel from "./routes/AdminPanel.js";
+import Favorites from "./routes/Favorites.js";
 import { store } from "./store.js";
 import Nav from "./components/Nav.js";
 import { Outlet } from "react-router-dom";
@@ -27,6 +28,7 @@ const AppRouting = () => {
             <Route exact path="/" element={<App />} />
             <Route exact path="/citations" element={<Citations />} />
             <Route exact path="/admin-panel" element={<AdminPanel />} />
+            <Route exact path="/favorites" element={<Favorites />} />
           </Route>
         </Routes>
       </Router>

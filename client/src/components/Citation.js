@@ -21,8 +21,6 @@ export default function Citation(props) {
   const citation_id = number;
   let [isFavorite, setIsFavorite] = useState(isFav);
 
-  const setFavorite = (event) => {};
-
   const handleFavorite = async (event) => {
     event.preventDefault();
     if (isFavorite) {
@@ -81,7 +79,7 @@ export default function Citation(props) {
   };
 
   useEffect(() => {
-    setFavorite();
+    console.log("isFav: " + isFavorite);
   }, []);
 
   return (
