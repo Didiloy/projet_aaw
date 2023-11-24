@@ -11,6 +11,13 @@ export default function Hero(props) {
     console.log("goToLogIn");
     window.location.href = "/auth/discord/login";
   }
+
+  function handleDeconnexion() {
+    fetch("/auth/logout", { method: "get" }).then(() => {
+      window.location.href = "/";
+    });
+  }
+
   return (
     <div className="hero">
       {props.isConnected ? (
@@ -30,6 +37,13 @@ export default function Hero(props) {
                 className="btn btn-primary btn-lg px-4 gap-3"
               >
                 Voir les citations
+              </button>
+              <button
+                onClick={handleDeconnexion}
+                type="button"
+                className="btn btn-danger btn-lg px-4 gap-3"
+              >
+                Se deconnecter
               </button>
             </div>
           </div>
