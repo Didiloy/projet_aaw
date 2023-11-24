@@ -55,6 +55,11 @@ app.get("/auth/discord/login", async (req, res) => {
   res.redirect(url);
 });
 
+app.get("/auth/logout", async (req, res) => {
+  res.clearCookie("projet_aaw_token");
+  res.redirect(process.env.CLIENT_REDIRECT_URL);
+});
+
 app.get("/auth/discord/callback", async (req, res) => {
   if (!req.query.code) throw new Error("Code not provided.");
 
@@ -95,7 +100,14 @@ app.get("/auth/discord/callback", async (req, res) => {
 
   if (checkIfUserExists.length > 0) {
     const oldUsername = checkIfUserExists[0].username;
-    await updateUserFromDiscordId(id, oldUsername, (tok = ""), false, username);
+    const isAdmin = checkIfUserExists[0].isAdmin;
+    await updateUserFromDiscordId(
+      id,
+      oldUsername,
+      (tok = ""),
+      isAdmin,
+      username
+    );
   } else {
     try {
       await createUser(username, (tok = ""), id, false);
