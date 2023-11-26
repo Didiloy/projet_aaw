@@ -91,6 +91,14 @@ async function readQuote(idq) {
   });
 }
 
+async function findQuotesByAuthor(author) {
+  return await prisma.quote.findMany({
+    where: {
+      authorId: author,
+    },
+  });
+}
+
 async function readAllQuotes() {
   return await prisma.quote.findMany();
 }
@@ -175,6 +183,7 @@ module.exports = {
   readAllQuotes,
   updateQuote,
   deleteQuote,
+  findQuotesByAuthor,
   createFavorite,
   getUserFavorites,
   deleteFavorite,

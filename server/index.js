@@ -25,7 +25,7 @@ const {
   getUserFavorites,
   findQuotesBySearchTerm,
 } = require("./database/script.js");
-//const bot = require("./bot.js")
+const bot = require("./bot.js");
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
