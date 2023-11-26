@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 require("dotenv").config();
-const { readAllQuotes, findQuotesByAuthor } = require("./database/script.js");
+const { getQuotesByAuthor, getAllQuotes } = require("./bot_helper.js");
 
 const bot = new Discord.Client({ intents: 33280 });
 
@@ -28,6 +28,7 @@ bot.on("messageCreate", function (message) {
   switch (command) {
     case "ping": {
       message.reply("Pong !");
+      break;
     }
     case "quotes": {
       if (args.length == 0) {
@@ -37,8 +38,7 @@ bot.on("messageCreate", function (message) {
           }
           message.reply(quotes);
         });
-      }
-      if (args.length == 1) {
+      } else if (args.length == 1) {
         getQuotesByAuthor(args[0]).then((quotes) => {
           if (quotes == "") {
             message.reply("Aucune citation de cet auteur");
@@ -49,27 +49,10 @@ bot.on("messageCreate", function (message) {
       } else {
         message.reply("Commande incorrecte.\nUsage: !quotes <auteur>");
       }
+      break;
     }
   }
 });
-
-const getAllQuotes = async () => {
-  const all_quotes_in_json = await readAllQuotes();
-  let all_quotes_string = "";
-  all_quotes_in_json.forEach((quote) => {
-    all_quotes_string += "**" + quote.authorId + "**: " + quote.content + "\n";
-  });
-  return all_quotes_string;
-};
-
-const getQuotesByAuthor = async (author) => {
-  const all_quotes_in_json = await findQuotesByAuthor(author);
-  let all_quotes_string = "";
-  all_quotes_in_json.forEach((quote) => {
-    all_quotes_string += "**" + quote.authorId + "**: " + quote.content + "\n";
-  });
-  return all_quotes_string;
-};
 
 bot.login(process.env.DISCORD_BOT_TOKEN);
 module.exports = bot;
