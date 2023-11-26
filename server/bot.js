@@ -1,6 +1,10 @@
 const Discord = require("discord.js");
 require("dotenv").config();
-const { getQuotesByAuthor, getAllQuotes } = require("./bot_helper.js");
+const {
+  getQuotesByAuthor,
+  getAllQuotes,
+  getFavoritesQuotes,
+} = require("./bot_helper.js");
 
 const bot = new Discord.Client({ intents: 33280 });
 
@@ -49,6 +53,17 @@ bot.on("messageCreate", function (message) {
       } else {
         message.reply("Commande incorrecte.\nUsage: !quotes <auteur>");
       }
+      break;
+    }
+    case "favorites": {
+      const username = message.author.username;
+      getFavoritesQuotes(username).then((quotes) => {
+        if (quotes == "") {
+          message.reply("Aucune citation favorite");
+          return;
+        }
+        message.reply(quotes);
+      });
       break;
     }
   }
