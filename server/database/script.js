@@ -95,6 +95,25 @@ async function readAllQuotes() {
   return await prisma.quote.findMany();
 }
 
+async function findQuotesBySearchTerm(query) {
+  return await prisma.quote.findMany({
+    where: {
+      OR: [
+        {
+          content: {
+            contains: query,
+          },
+        },
+        {
+          authorId: {
+            contains: query,
+          },
+        },
+      ],
+    },
+  });
+}
+
 async function updateQuote(idq, cont, author) {
   return await prisma.quote.update({
     where: {
@@ -161,4 +180,5 @@ module.exports = {
   deleteFavorite,
   selectUserWhere,
   updateUserFromDiscordId,
+  findQuotesBySearchTerm,
 };

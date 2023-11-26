@@ -14,6 +14,13 @@ export default function Nav() {
       });
   }
 
+  async function handleSearch(event) {
+    event.preventDefault();
+    const search = event.target[0].value;
+    console.log("search: " + search);
+    window.location.href = `/citations/search/${search}`;
+  }
+
   useEffect(() => {
     verifyIsAdmin();
   }, []);
@@ -48,6 +55,7 @@ export default function Nav() {
           <form
             className="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
             role="search"
+            onSubmit={handleSearch}
           >
             <input
               type="search"

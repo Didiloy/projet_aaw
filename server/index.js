@@ -23,6 +23,7 @@ const {
   selectUserWhere,
   updateUserFromDiscordId,
   getUserFavorites,
+  findQuotesBySearchTerm,
 } = require("./database/script.js");
 //const bot = require("./bot.js")
 const port = process.env.PORT || 3000;
@@ -222,7 +223,13 @@ app.get("/api/get-quote/:id", async function (req, res) {
 app.get("/api/get-quotes", async function (req, res) {
   //récupère toutes les citations
   const quotes = await readAllQuotes();
-  console.log(quotes);
+  // console.log(quotes);
+  res.json(quotes);
+});
+
+app.get("/api/get-quotes/:search_term", async (req, res) => {
+  const search_term = req.params.search_term;
+  const quotes = await findQuotesBySearchTerm(search_term);
   res.json(quotes);
 });
 
