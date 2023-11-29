@@ -38,6 +38,7 @@ bot.on("messageCreate", function (message) {
       if (args.length == 0) {
         getAllQuotes().then((quotes) => {
           if (quotes == "") {
+            message.reply("Aucunes citations disponibles");
             return;
           }
           message.reply(quotes);
