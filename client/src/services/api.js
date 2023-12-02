@@ -47,6 +47,10 @@ class client {
   post(endpoint, data) {
     return this.request(endpoint, "POST", data);
   }
+
+  delete(endpoint) {
+    return this.request(endpoint, "DELETE");
+  }
 }
 
 const c = new client();

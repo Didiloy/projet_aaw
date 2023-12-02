@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CitationModal from "./CitationModal";
+import useClient from "../services/api";
 export default function Citation(props) {
   const {
     citation,
@@ -20,15 +21,14 @@ export default function Citation(props) {
   const css_class_name = `${backgroundColor} ${rounded_top} ${rounded_bottom}`;
   const citation_id = number;
   let [isFavorite, setIsFavorite] = useState(isFav);
+  const client = useClient();
 
   const handleFavorite = async (event) => {
     event.preventDefault();
     if (isFavorite) {
       //delete from favorite
-      await fetch(`/api/delete-favorite/${username}/${citation_id}`, {
-        method: "DELETE",
-      })
-        .then((res) => res.json())
+      client
+        .delete(`delete-favorite/${username}/${citation_id}`)
         .then((data) => {
           if (data.isDeleted) setIsFavorite(false);
           else {
@@ -43,17 +43,11 @@ export default function Citation(props) {
         });
     } else {
       //add to favorite
-      await fetch("/api/create-favorite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      client
+        .post(`create-favorite`, {
           quoteId: citation_id,
           userId: username,
-        }),
-      })
-        .then((res) => res.json())
+        })
         .then((data) => {
           setIsFavorite(true);
         })
@@ -79,7 +73,7 @@ export default function Citation(props) {
   };
 
   useEffect(() => {
-    console.log("isFav: " + isFavorite);
+    // console.log("isFav: " + isFavorite);
   }, []);
 
   return (
