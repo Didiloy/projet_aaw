@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import CitationsList from "../components/CitationsList";
+import useClient from "../services/api";
 export default function Search() {
   const { search } = useParams();
   const [all_citations, set_all_citations] = useState([]);
   const [all_citations_fetched, set_all_citations_fetched] = useState(false);
   let [isAdmin, setIsAdmin] = useState(false);
   let [isAuthenticated, setIsAuthenticated] = useState(false);
+  const client = useClient();
 
   async function verifyUserInfos() {
-    await fetch("/api/is-authenticated")
-      .then((res) => res.json())
-      .then((data) => {
-        //Il faut set les autre state avec isAuthenticated pck react redessine les composant
-        setIsAuthenticated(data.isAuthenticated);
-        if (data.isAuthenticated) {
-          setIsAdmin(data.user.isAdmin);
-        }
-      });
+    client.get("is-authenticated").then((data) => {
+      //Il faut set les autre state avec isAuthenticated pck react redessine les composant
+      setIsAuthenticated(data.isAuthenticated);
+      if (data.isAuthenticated) {
+        setIsAdmin(data.user.isAdmin);
+      }
+    });
   }
 
   const getCitations = (query) => {
-    fetch(`/api/get-quotes/${query}`, {
-      method: "GET",
-    })
-      .then((res) => res.json())
+    client
+      .get(`get-quotes/${query}`)
       .then((data) => {
-        console.log(data);
         set_all_citations(data);
         set_all_citations_fetched(true);
       })

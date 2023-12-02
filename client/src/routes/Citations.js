@@ -1,33 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CitationsList from "../components/CitationsList";
+import useClient from "../services/api";
 export default function Citations() {
   let [citation_to_add, set_citation_to_add] = useState("");
   let [all_citations, set_all_citations] = useState([]);
   let [isAdmin, setIsAdmin] = useState(false);
   let [isAuthenticated, setIsAuthenticated] = useState(false);
+  const client = useClient();
 
   async function verifyUserInfos() {
-    await fetch("/api/is-authenticated")
-      .then((res) => res.json())
-      .then((data) => {
-        //Il faut set les autre state avec isAuthenticated pck react redessine les composant
-        setIsAuthenticated(data.isAuthenticated);
-        if (data.isAuthenticated) {
-          setIsAdmin(data.user.isAdmin);
-        }
-      });
+    client.get(`is-authenticated`).then((data) => {
+      setIsAuthenticated(data.isAuthenticated);
+      if (data.isAuthenticated) {
+        setIsAdmin(data.user.isAdmin);
+      }
+    });
   }
 
   const username = useSelector((state) => state.username);
 
   const fetch_all_citations = async () => {
     const fetch_all_citations_aux = async () => {
-      //used to wait for the fetch to finish because it's not possible in useEffect
-      fetch("/api/get-quotes")
-        .then((response) => response.json())
+      client
+        .get("get-quotes")
         .then((data) => {
-          console.log(data);
+          // console.log(data);
           set_all_citations(data);
         })
         .catch((err) => {
@@ -56,26 +54,16 @@ export default function Citations() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch("/api/create-quote", {
-      method: "post",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
+    const body = {
+      content: citation_to_add,
+      authorId: username,
+    };
 
-      //make sure to serialize your JSON body
-      body: JSON.stringify({
-        content: citation_to_add,
-        authorId: username,
-      }),
-    })
-      .then((response) => {
-        //do something awesome that makes the world a better place
+    client
+      .post("create-quote", body)
+      .then((data) => {
         set_citation_to_add("");
-        response.json().then((data) => {
-          console.log(data);
-          fetch_all_citations();
-        });
+        fetch_all_citations();
       })
       .catch((err) => {
         console.log(err);
