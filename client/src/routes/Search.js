@@ -9,6 +9,10 @@ export default function Search() {
   let [isAdmin, setIsAdmin] = useState(false);
   let [isAuthenticated, setIsAuthenticated] = useState(false);
   const client = useClient();
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const toggleShowError = () => setShowError(!showError);
 
   async function verifyUserInfos() {
     client.get("is-authenticated").then((data) => {
@@ -28,7 +32,8 @@ export default function Search() {
         set_all_citations_fetched(true);
       })
       .catch((err) => {
-        //TODO SHOW ERROR
+        setErrorMessage("Il y a eu une erreur pendant la recherche.");
+        toggleShowError();
         console.log("err fetching search result:" + err);
       });
   };
@@ -76,6 +81,7 @@ export default function Search() {
           </div>
         )}
       </div>
+      {showError ? <ErrorToast content={errorMessage} /> : <div />}
     </div>
   );
 }

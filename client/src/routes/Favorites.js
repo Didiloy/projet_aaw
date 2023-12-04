@@ -11,6 +11,10 @@ export default function Favorites() {
   let [favorites_citations, setFavorites_citations] = useState([]);
   const username = useSelector((state) => state.username);
   const client = useClient();
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const toggleShowError = () => setShowError(!showError);
 
   const set_favorites_citations = () => {
     let fav_citations = [];
@@ -43,7 +47,10 @@ export default function Favorites() {
           setFavorites(fav);
         })
         .catch((err) => {
-          //TODO SHOW ERROR
+          setErrorMessage(
+            "Il y a eu une erreur pendant la récupération des favoris."
+          );
+          toggleShowError();
           console.log("err fetching favorite:" + err);
         });
     };
@@ -102,6 +109,7 @@ export default function Favorites() {
           </div>
         )}
       </div>
+      {showError ? <ErrorToast content={errorMessage} /> : <div />}
     </div>
   );
 }

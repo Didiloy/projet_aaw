@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CitationModal from "./CitationModal";
 import useClient from "../services/api";
+import ErrorToast from "./ErrorToast";
 export default function Citation(props) {
   const {
     citation,
@@ -22,6 +23,10 @@ export default function Citation(props) {
   const citation_id = number;
   let [isFavorite, setIsFavorite] = useState(isFav);
   const client = useClient();
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const toggleShowError = () => setShowError(!showError);
 
   const handleFavorite = async (event) => {
     event.preventDefault();
@@ -33,12 +38,18 @@ export default function Citation(props) {
           if (data.isDeleted) setIsFavorite(false);
           else {
             setIsFavorite(true);
-            //TODO SHOW ERROR
+            setErrorMessage(
+              "Il y a eu une erreur pendant la suppression du favoris."
+            );
+            toggleShowError();
             console.log("err deleting favorite:" + data.message);
           }
         })
         .catch((err) => {
-          //TODO SHOW ERROR
+          setErrorMessage(
+            "Il y a eu une erreur pendant la suppression du favoris."
+          );
+          toggleShowError();
           console.log("err deleting favorite:" + err);
         });
     } else {
@@ -52,7 +63,10 @@ export default function Citation(props) {
           setIsFavorite(true);
         })
         .catch((err) => {
-          //TODO SHOW ERROR
+          setErrorMessage(
+            "Il y a eu une erreur pendant la création du favoris."
+          );
+          toggleShowError();
           console.log("err adding favorite:" + err);
         });
     }
@@ -135,6 +149,7 @@ export default function Citation(props) {
         creation_date={creation_date}
         id={id}
       />
+      {showError ? <ErrorToast content={errorMessage} /> : <div />}
     </div>
   );
 }

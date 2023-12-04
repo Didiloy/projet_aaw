@@ -9,6 +9,10 @@ export default function CitationsList(props) {
   let id = 0;
   const username = useSelector((state) => state.username);
   const client = useClient();
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const toggleShowError = () => setShowError(!showError);
 
   const fetch_favorites = async () => {
     const fetch_favorites_aux = async () => {
@@ -23,7 +27,10 @@ export default function CitationsList(props) {
           setFetched_favorites(true);
         })
         .catch((err) => {
-          //TODO SHOW ERROR
+          setErrorMessage(
+            "Il y a eu une erreur pendant la récupération des favoris."
+          );
+          toggleShowError();
           console.log("err fetching favorite:" + err);
         });
     };
@@ -62,6 +69,7 @@ export default function CitationsList(props) {
           <h1 className="text-center">Aucunes citations</h1>
         </div>
       )}
+      {showError ? <ErrorToast content={errorMessage} /> : <div />}
     </div>
   );
 }
