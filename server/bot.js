@@ -6,20 +6,15 @@ const {
   getFavoritesQuotes,
 } = require("./bot_helper.js");
 
-const bot = new Discord.Client({ intents: 33280 });
+const bot = new Discord.Client({ intents: [Discord.GatewayIntentBits.Guilds, Discord.GatewayIntentBits.GuildMessages, Discord.GatewayIntentBits.MessageContent] });
 
-const prefix = "!";
+const prefix = "!mpb ";
 
-bot.on("ready", async (c) => {
+bot.on("ready", () => {
   console.log(bot.user.username + " is ready");
-  c.user.setActivity("faire le gros bébé qui veut pas fonctionner");
-  c.channels.fetch("1172553667338047599").then((channel) => {
-    // channel.send("Je suis pret");
-  });
-  //TODO: trouver un moyen d'avoir le channel par nom
 });
 
-bot.on("messageCreate", function (message) {
+bot.on("messageCreate", (message) =>{
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
 
