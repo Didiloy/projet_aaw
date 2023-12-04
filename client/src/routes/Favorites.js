@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CitationsList from "../components/CitationsList";
 import { useSelector } from "react-redux";
+import useClient from "../services/api";
 
 export default function Favorites() {
   let [all_citations, set_all_citations] = useState([]);
@@ -9,6 +10,7 @@ export default function Favorites() {
   let [favorites, setFavorites] = useState([]);
   let [favorites_citations, setFavorites_citations] = useState([]);
   const username = useSelector((state) => state.username);
+  const client = useClient();
 
   const set_favorites_citations = () => {
     let fav_citations = [];
@@ -21,25 +23,19 @@ export default function Favorites() {
   };
 
   async function verifyUserInfos() {
-    await fetch("/api/is-authenticated")
-      .then((res) => res.json())
-      .then((data) => {
-        //Il faut set les autre state avec isAuthenticated pck react redessine les composant
-        setIsAuthenticated(data.isAuthenticated);
-        if (data.isAuthenticated) {
-          setIsAdmin(data.user.isAdmin);
-        }
-      });
+    client.get(`is-authenticated`).then((data) => {
+      setIsAuthenticated(data.isAuthenticated);
+      if (data.isAuthenticated) {
+        setIsAdmin(data.user.isAdmin);
+      }
+    });
   }
 
   const fetch_favorites = async () => {
     const fetch_favorites_aux = async () => {
-      fetch(`/api/get-favorites/${username}`, {
-        method: "GET",
-      })
-        .then((res) => res.json())
+      client
+        .get(`get-favorites/${username}`)
         .then((data) => {
-          console.log(data);
           let fav = [];
           data.map((citation) => {
             fav.push(citation.quoteId);
@@ -57,11 +53,9 @@ export default function Favorites() {
 
   const fetch_all_citations = async () => {
     const fetch_all_citations_aux = async () => {
-      //used to wait for the fetch to finish because it's not possible in useEffect
-      fetch("/api/get-quotes")
-        .then((response) => response.json())
+      client
+        .get("get-quotes")
         .then((data) => {
-          console.log(data);
           set_all_citations(data);
         })
         .catch((err) => {

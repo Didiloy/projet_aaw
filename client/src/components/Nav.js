@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
+import useClient from "../services/api";
 export default function Nav() {
   let [isAdmin, setIsAdmin] = useState(false);
   let [isAuthenticated, setIsAuthenticated] = useState(false);
+  const client = useClient();
   async function verifyIsAdmin() {
-    await fetch("/api/is-authenticated")
-      .then((res) => res.json())
-      .then((data) => {
-        //Il faut set les autre state avec isAuthenticated pck react redessine les composant
-        if (data.isAuthenticated) {
-          setIsAdmin(data.user.isAdmin);
-          setIsAuthenticated(data.isAuthenticated);
-        }
-      });
+    client.get(`is-authenticated`).then((data) => {
+      if (data.isAuthenticated) {
+        setIsAdmin(data.user.isAdmin);
+        setIsAuthenticated(data.isAuthenticated);
+      }
+    });
   }
 
   async function handleSearch(event) {
     event.preventDefault();
     const search = event.target[0].value;
-    console.log("search: " + search);
     window.location.href = `/citations/search/${search}`;
   }
 

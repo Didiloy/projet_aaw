@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useClient from "../services/api";
 export default function User(props) {
   const { username, isAdmin } = props;
   const isEven = props.isEven;
@@ -6,26 +7,22 @@ export default function User(props) {
   const rounded_top = props.rounded_top ? "rounded-top" : "";
   const rounded_bottom = props.rounded_bottom ? "rounded-bottom mb-5" : "";
   const css_class_name = `${backgroundColor} ${rounded_top} ${rounded_bottom}`;
+  const client = useClient();
 
   const handleOnClick = (event) => {
     event.preventDefault();
-    fetch("/api/update-user/" + username, {
-      method: "post",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: username,
-        isAdmin: !isAdmin,
-      }),
-    })
-      .then((response) => {
+    const body = {
+      username: username,
+      isAdmin: !isAdmin,
+    };
+
+    client
+      .post("update-user/" + username, body)
+      .then((data) => {
         window.location.reload();
       })
       .catch((err) => {
         console.log(err);
-        //TODO: handle error
       });
   };
 

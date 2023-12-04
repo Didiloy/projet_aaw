@@ -8,7 +8,6 @@ export default function Hero(props) {
   }
 
   function goToLogIn() {
-    console.log("goToLogIn");
     window.location.href = "/auth/discord/login";
   }
 

@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Citation from "./Citation";
 import { useSelector } from "react-redux";
+import useClient from "../services/api";
 export default function CitationsList(props) {
   const { all_citations, isAdmin, deleteCitation, isAuthenticated } = props;
   let [favorites, setFavorites] = useState([]);
   let [fetched_favorites, setFetched_favorites] = useState(false);
   let id = 0;
   const username = useSelector((state) => state.username);
+  const client = useClient();
 
   const fetch_favorites = async () => {
     const fetch_favorites_aux = async () => {
-      fetch(`/api/get-favorites/${username}`, {
-        method: "GET",
-      })
-        .then((res) => res.json())
+      client
+        .get("get-favorites/" + username)
         .then((data) => {
-          console.log(data);
           let fav = [];
           data.map((citation) => {
             fav.push(citation.quoteId);

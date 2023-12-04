@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import User from "../components/User";
+import useClient from "../services/api";
 export default function AdminPanel() {
   let [all_users, set_all_users] = useState([]);
   let id = 0;
+  const client = useClient();
 
   const fetch_all_users = () => {
-    fetch("/api/get-all-users")
-      .then((response) => response.json())
+    client
+      .get("get-all-users")
       .then((data) => {
         set_all_users(data);
       })
@@ -16,10 +18,9 @@ export default function AdminPanel() {
   };
 
   async function verifyIsAdmin() {
-    await fetch("/api/is-authenticated")
-      .then((res) => res.json())
+    client
+      .get(`is-authenticated`)
       .then((data) => {
-        //Il faut set les autre state avec isAuthenticated pck react redessine les composant
         if (!data.user.isAdmin) {
           window.location.href = "/";
         }
