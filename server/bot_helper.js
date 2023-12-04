@@ -2,6 +2,7 @@ const {
   readAllQuotes,
   findQuotesByAuthor,
   getUserFavorites,
+  createQuote,
 } = require("./database/script.js");
 
 const getAllQuotes = async () => {
@@ -41,4 +42,8 @@ const getFavoritesQuotes = async (username) => {
   return response_quotes_string;
 };
 
-module.exports = { getAllQuotes, getQuotesByAuthor, getFavoritesQuotes };
+const createNewQuote = async (cont, author) => {
+  await createQuote(cont, author);
+}
+
+module.exports = { getAllQuotes, getQuotesByAuthor, getFavoritesQuotes, createNewQuote };

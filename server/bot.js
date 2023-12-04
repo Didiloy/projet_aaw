@@ -4,11 +4,12 @@ const {
   getQuotesByAuthor,
   getAllQuotes,
   getFavoritesQuotes,
+  createNewQuote,
 } = require("./bot_helper.js");
 
 const bot = new Discord.Client({ intents: 33280 });
 
-const prefix = "!";
+const prefix = "!mpb ";
 
 bot.on("ready", async (c) => {
   console.log(bot.user.username + " is ready");
@@ -65,6 +66,15 @@ bot.on("messageCreate", function (message) {
         }
         message.reply(quotes);
       });
+      break;
+    }
+    case "addquote": {
+      if(args.length >= 1){
+        const username = message.author.username;
+        const q = args[0];
+        createNewQuote(q, username)
+        message.reply("Ajout réussi !")
+      }
       break;
     }
   }
