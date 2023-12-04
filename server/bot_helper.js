@@ -3,6 +3,8 @@ const {
   findQuotesByAuthor,
   getUserFavorites,
   createQuote,
+  createUser,
+  readUser,
 } = require("./database/script.js");
 
 const getAllQuotes = async () => {
@@ -42,7 +44,13 @@ const getFavoritesQuotes = async (username) => {
   return response_quotes_string;
 };
 
-const createNewQuote = async (cont, author) => {
+const createNewQuote = async (cont, author,id) => {
+  user = await readUser(author)
+  if(user == null){
+    createUser(author,"",id)
+  }
+
+
   await createQuote(cont, author);
 }
 

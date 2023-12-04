@@ -65,9 +65,13 @@ bot.on("messageCreate", (message) =>{
     }
     case "addquote": {
       if(args.length >= 1){
+        let q = "";
+        args.forEach(element => {
+          q += " "+element;
+        });
         const username = message.author.username;
-        const q = args[0];
-        createNewQuote(q, username)
+        
+        createNewQuote(q, username,message.author.id);
         message.reply("Ajout réussi !")
       }
       break;
