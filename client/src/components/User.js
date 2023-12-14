@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useClient from "../services/api";
 export default function User(props) {
-  const { username, isAdmin } = props;
+  const { username, isAdmin, isConnected } = props;
   const isEven = props.isEven;
   const backgroundColor = isEven ? "bg-secondary-subtle" : "bg-primary-subtle";
   const rounded_top = props.rounded_top ? "rounded-top" : "";
@@ -18,6 +18,18 @@ export default function User(props) {
 
     client
       .post("update-user/" + username, body)
+      .then((data) => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleDisconnect = (event) => {
+    event.preventDefault();
+    client
+      .get("disconnect-user/" + username)
       .then((data) => {
         window.location.reload();
       })
@@ -45,6 +57,17 @@ export default function User(props) {
               ? "Retirer les privilèges administateur"
               : "Donner des privilèges administateur"}
           </button>
+          {isConnected ? (
+            <button
+              type="button"
+              className="btn btn-danger ms-2"
+              onClick={handleDisconnect}
+            >
+              Déconnecter
+            </button>
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ const {
   getAllUsers,
   readUser,
   createUser,
+  updateUserToken,
   updateUser,
   deleteUser,
   createQuote,
@@ -24,6 +25,7 @@ const {
   updateUserFromDiscordId,
   getUserFavorites,
   findQuotesBySearchTerm,
+  deleteUserToken,
 } = require("./database/script.js");
 const bot = require("./bot.js");
 const port = process.env.PORT || 3000;
@@ -65,7 +67,7 @@ app.get("/auth/discord/callback", async (req, res) => {
   if (!req.query.code) throw new Error("Code not provided.");
 
   const { code } = req.query;
-  console.log("code: " + code);
+  // console.log("code: " + code);
   const params = new URLSearchParams({
     client_id: process.env.DISCORD_CLIENT_ID,
     client_secret: process.env.DISCORD_CLIENT_SECRET,
@@ -99,27 +101,21 @@ app.get("/auth/discord/callback", async (req, res) => {
 
   const checkIfUserExists = await selectUserWhere({ discordId: id });
 
+  const token = await sign({ sub: id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+
   if (checkIfUserExists.length > 0) {
     const oldUsername = checkIfUserExists[0].username;
     const isAdmin = checkIfUserExists[0].isAdmin;
-    await updateUserFromDiscordId(
-      id,
-      oldUsername,
-      (tok = ""),
-      isAdmin,
-      username
-    );
+    await updateUserFromDiscordId(id, oldUsername, token, isAdmin, username);
   } else {
     try {
-      await createUser(username, (tok = ""), id, false);
+      await createUser(username, token, id, false);
     } catch (err) {
       console.log(err);
     }
   }
-
-  const token = await sign({ sub: id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
 
   var cookie = req.cookies.projet_aaw_token;
   if (cookie === undefined) {
@@ -129,30 +125,66 @@ app.get("/auth/discord/callback", async (req, res) => {
     });
   } else {
     res.cookie("projet_aaw_token", token);
-    console.log("cookie exists", cookie);
   }
   res.redirect(process.env.CLIENT_REDIRECT_URL);
 });
 
 app.get("/api/is-authenticated", async (req, res) => {
   const token = req.cookies.projet_aaw_token;
-
   if (token === undefined) {
     res.json({ isAuthenticated: false });
   } else {
-    try {
-      const { sub } = await verify(token, process.env.JWT_SECRET);
-      const user = await selectUserWhere({ discordId: sub });
-      res.json({
-        isAuthenticated: true,
-        user: {
-          username: user[0].username,
-          isAdmin: user[0].isAdmin,
-        },
-      });
-    } catch (e) {
-      console.log("error: " + e);
+    if (token == "") {
       res.json({ isAuthenticated: false });
+    } else {
+      try {
+        const { sub, exp } = verify(token, process.env.JWT_SECRET);
+        const user = await selectUserWhere({ discordId: sub });
+        //verifier si l'utilisateur a le token en base de données
+        if (user[0].token == "") {
+          res.cookie("projet_aaw_token", "");
+          res.json({
+            isAuthenticated: false,
+            user: {
+              username: user[0].username,
+              isAdmin: user[0].isAdmin,
+            },
+          });
+          return;
+        }
+        let user_token_date = new Date(exp * 1000);
+        let now = new Date();
+        if (user_token_date.getTime() / 1000 > now.getTime() / 1000) {
+          //si la date d'expiration du token est plus grand que la date actuelle
+          // const new_token = sign({ sub: sub }, process.env.JWT_SECRET, {
+          //   expiresIn: "7d",
+          // });
+          // //si le token n'est pas expiré
+          // await updateUserToken(user.username, new_token);
+          // console.log("updated token");
+          res.json({
+            isAuthenticated: true,
+            user: {
+              username: user[0].username,
+              isAdmin: user[0].isAdmin,
+            },
+          });
+        } else {
+          //si le token est expiré il faut le supprimer de la base de données
+          await deleteUserToken(user[0].username);
+          res.cookie("projet_aaw_token", "");
+          res.json({
+            isAuthenticated: false,
+            user: {
+              username: user[0].username,
+              isAdmin: user[0].isAdmin,
+            },
+          });
+        }
+      } catch (e) {
+        console.log("error: " + e);
+        res.json({ isAuthenticated: false });
+      }
     }
   }
 });
@@ -208,6 +240,13 @@ app.delete("/api/delete-user/:username", async function (req, res) {
 
     res.status(500).json(response);
   }
+});
+
+app.get("/api/disconnect-user/:username", async function (req, res) {
+  const usern = req.params.username;
+  const user = await readUser(usern);
+  await deleteUserToken(usern);
+  res.json(user);
 });
 
 //======= Quote ======

@@ -56,6 +56,7 @@ export default function AdminPanel() {
                 isEven={id % 2 === 0}
                 isAdmin={user.isAdmin}
                 username={user.username}
+                isConnected={user.token !== ""}
                 rounded_top={id === 1}
                 rounded_bottom={id === all_users.length}
               />
