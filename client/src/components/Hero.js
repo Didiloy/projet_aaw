@@ -20,12 +20,12 @@ export default function Hero(props) {
   return (
     <div className="hero">
       {props.isConnected ? (
-        <div className="px-4 py-5 my-5 text-center">
+        <div className="px-4 py-5 my-5 text-center font-bookantiqua">
           <h1 className="display-5 fw-bold text-body-emphasis">
             AAW Citations
           </h1>
           <div className="col-lg-6 mx-auto">
-            <p className="lead mb-4">
+            <p className="lead mb-4 font-bookantiqua">
               Vous êtes connecté en tant que <b>{username}</b>. Ajoutez ou lisez
               des citations.
             </p>
@@ -33,21 +33,21 @@ export default function Hero(props) {
               <button
                 onClick={goToCitations}
                 type="button"
-                className="btn btn-primary btn-lg px-4 gap-3"
+                className="btn btn-primary btn-lg px-4 gap-3 font-bookantiqua"
               >
                 Voir les citations
               </button>
               <button
                 onClick={handleDeconnexion}
                 type="button"
-                className="btn btn-danger btn-lg px-4 gap-3"
+                className="btn btn-danger btn-lg px-4 gap-3 font-bookantiqua"
               >
                 Se deconnecter
               </button>
             </div>
           </div>
           <div className="col-lg-6 mx-auto">
-            <p className="lead mb-4">
+            <p className="lead mb-4 font-bookantiqua">
               Bienvenue sur le site des citations ultimes flamboyantes inspirées de Marcel Proust.
               Laissez vous inspirer et rajouter vos propres citations.
               Si vous manquez d'idées vous pouvez aller consulter les citations des autres utilisateurs.
