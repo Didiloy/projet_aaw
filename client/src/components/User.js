@@ -31,7 +31,7 @@ export default function User(props) {
     client
       .get("disconnect-user/" + username)
       .then((data) => {
-        window.location.reload();
+        window.location.href= "/"
       })
       .catch((err) => {
         console.log(err);
