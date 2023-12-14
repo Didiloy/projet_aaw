@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
@@ -11,16 +11,18 @@ import { store } from "./store.js";
 import Nav from "./components/Nav.js";
 import { Outlet } from "react-router-dom";
 function Layout() {
+
   return (
     <div>
       <Nav />
       {/* //Outlet is a placeholder for all the nested route components */}
-      <Outlet />
+      <Outlet/>
     </div>
   );
 }
 
 const AppRouting = () => {
+  
   return (
     <Provider store={store}>
       <Router>
