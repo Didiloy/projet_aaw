@@ -64,10 +64,32 @@ async function updateUser(usern, isAd) {
   });
 }
 
+async function updateUserToken(usern, token) {
+  return await prisma.user.update({
+    where: {
+      username: usern,
+    },
+    data: {
+      token: token,
+    },
+  });
+}
+
 async function deleteUser(usern) {
   return await prisma.user.delete({
     where: {
       username: usern,
+    },
+  });
+}
+
+async function deleteUserToken(usern) {
+  return await prisma.user.update({
+    where: {
+      username: usern,
+    },
+    data: {
+      token: "",
     },
   });
 }
@@ -177,6 +199,7 @@ module.exports = {
   createUser,
   readUser,
   updateUser,
+  updateUserToken,
   deleteUser,
   createQuote,
   readQuote,
@@ -190,4 +213,5 @@ module.exports = {
   selectUserWhere,
   updateUserFromDiscordId,
   findQuotesBySearchTerm,
+  deleteUserToken,
 };
