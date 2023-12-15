@@ -173,6 +173,7 @@ app.get("/api/is-authenticated", async (req, res) => {
           //si le token est expiré il faut le supprimer de la base de données
           await deleteUserToken(user[0].username);
           res.cookie("projet_aaw_token", "");
+
           res.json({
             isAuthenticated: false,
             user: {

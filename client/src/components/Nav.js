@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from "react";
 import useClient from "../services/api";
+import { changeUsername, changeIsAdmin } from "../store";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+
 export default function Nav() {
-  let [isAdmin, setIsAdmin] = useState(false);
-  let [isAuthenticated, setIsAuthenticated] = useState(false);
   const client = useClient();
-  async function verifyIsAdmin() {
-    client.get(`is-authenticated`).then((data) => {
+  const username = useSelector((state) => state.username.username);
+  const isAdmin = useSelector((state) => state.isAdmin.isAdmin);
+  let [isAuthenticated, setIsAuthenticated] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleUpdateUsername = (newUsername) => {
+    dispatch(changeUsername(newUsername));
+  };
+
+  const handleUpdateIsAdmin = (newIsAdmin) => {
+    dispatch(changeIsAdmin(newIsAdmin));
+  };
+
+  async function isConnected() {
+    client.get("is-authenticated").then((data) => {
       if (data.isAuthenticated) {
-        setIsAdmin(data.user.isAdmin);
-        setIsAuthenticated(data.isAuthenticated);
+        handleUpdateUsername(data.user.username);
+        handleUpdateIsAdmin(data.user.isAdmin);
       }
+      setIsAuthenticated(data.isAuthenticated);
     });
   }
 
@@ -20,33 +36,34 @@ export default function Nav() {
   }
 
   useEffect(() => {
-    verifyIsAdmin();
-  }, []);
+    isConnected();
+  }, [username, isAdmin]);
+
   return (
     <nav className="navbar navbar-expand-lg bg-secondary">
       <div className="container-fluid">
-        <a className="navbar-brand text-light" href="/">
+        <Link className="navbar-brand text-light" to="/">
           AAW Citations
-        </a>
+        </Link>
         <div className="collapse navbar-collapse d-flex" id="navbarNav">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
-              <a className="nav-link text-light" href="/citations">
+              <Link className="nav-link text-light" to="/citations">
                 Citations
-              </a>
+              </Link>
             </li>
             {isAuthenticated && (
               <li className="nav-item">
-                <a className="nav-link text-light" href="/favorites">
+                <Link className="nav-link text-light" to="/favorites">
                   Favoris
-                </a>
+                </Link>
               </li>
             )}
             {isAdmin && (
               <li className="nav-item">
-                <a className="nav-link text-light" href="/admin-panel">
+                <Link className="nav-link text-light" to="/admin-panel">
                   Admin Panel
-                </a>
+                </Link>
               </li>
             )}
           </ul>

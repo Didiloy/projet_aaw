@@ -6,23 +6,18 @@ export default function Search() {
   const { search } = useParams();
   const [all_citations, set_all_citations] = useState([]);
   const [all_citations_fetched, set_all_citations_fetched] = useState(false);
-  let [isAdmin, setIsAdmin] = useState(false);
-  let [isAuthenticated, setIsAuthenticated] = useState(false);
   const client = useClient();
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const username = useSelector((state) => state.username.username);
+  const isAdmin = useSelector((state) => state.isAdmin.isAdmin);
+  let [isAuthenticated, setIsAuthenticated] = useState(username !== "");
+
+  useEffect(() => {
+    setIsAuthenticated(username !== "");
+  }, [username]);
 
   const toggleShowError = () => setShowError(!showError);
-
-  async function verifyUserInfos() {
-    client.get("is-authenticated").then((data) => {
-      //Il faut set les autre state avec isAuthenticated pck react redessine les composant
-      setIsAuthenticated(data.isAuthenticated);
-      if (data.isAuthenticated) {
-        setIsAdmin(data.user.isAdmin);
-      }
-    });
-  }
 
   const getCitations = (query) => {
     client
@@ -43,7 +38,6 @@ export default function Search() {
   };
 
   useEffect(() => {
-    verifyUserInfos();
     getCitations(search);
   }, []);
 

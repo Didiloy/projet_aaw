@@ -7,7 +7,7 @@ export default function CitationsList(props) {
   let [favorites, setFavorites] = useState([]);
   let [fetched_favorites, setFetched_favorites] = useState(false);
   let id = 0;
-  const username = useSelector((state) => state.username);
+  const username = useSelector((state) => state.username.username);
   const client = useClient();
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");

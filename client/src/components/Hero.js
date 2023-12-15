@@ -1,11 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
-export default function Hero(props) {
-  const username = useSelector((state) => state.username);
-
-  function goToCitations() {
-    window.location.href = "/citations";
-  }
+import { Link } from "react-router-dom";
+export default function Hero() {
+  const store = useSelector((state) => state.username);
+  const username = store.username;
 
   function goToLogIn() {
     window.location.href = "/auth/discord/login";
@@ -19,7 +17,7 @@ export default function Hero(props) {
 
   return (
     <div className="hero">
-      {props.isConnected ? (
+      {username != "" ? (
         <div className="px-4 py-5 my-5 text-center">
           <h1 className="display-5 fw-bold text-body-emphasis">
             AAW Citations
@@ -30,13 +28,13 @@ export default function Hero(props) {
               des citations.
             </p>
             <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
-              <button
-                onClick={goToCitations}
+              <Link
+                to="/citations"
                 type="button"
                 className="btn btn-primary btn-lg px-4 gap-3"
               >
                 Voir les citations
-              </button>
+              </Link>
               <button
                 onClick={handleDeconnexion}
                 type="button"

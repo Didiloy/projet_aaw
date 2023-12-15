@@ -14,7 +14,7 @@ export default function Citation(props) {
     number,
     isFav,
   } = props;
-  const username = useSelector((state) => state.username);
+  const username = useSelector((state) => state.username.username);
   const isEven = props.isEven;
   const backgroundColor = isEven ? "bg-secondary-subtle" : "bg-primary-subtle";
   const rounded_top = props.rounded_top ? "rounded-top" : "";
@@ -86,9 +86,7 @@ export default function Citation(props) {
       });
   };
 
-  useEffect(() => {
-    // console.log("isFav: " + isFavorite);
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <div className={css_class_name} style={{ width: "100%", height: "auto" }}>

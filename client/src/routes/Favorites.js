@@ -5,14 +5,18 @@ import useClient from "../services/api";
 
 export default function Favorites() {
   let [all_citations, set_all_citations] = useState([]);
-  let [isAdmin, setIsAdmin] = useState(false);
-  let [isAuthenticated, setIsAuthenticated] = useState(false);
   let [favorites, setFavorites] = useState([]);
   let [favorites_citations, setFavorites_citations] = useState([]);
-  const username = useSelector((state) => state.username);
   const client = useClient();
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const username = useSelector((state) => state.username.username);
+  const isAdmin = useSelector((state) => state.isAdmin.isAdmin);
+  let [isAuthenticated, setIsAuthenticated] = useState(username !== "");
+
+  useEffect(() => {
+    setIsAuthenticated(username !== "");
+  }, [username]);
 
   const toggleShowError = () => setShowError(!showError);
 
@@ -25,15 +29,6 @@ export default function Favorites() {
     });
     setFavorites_citations(fav_citations);
   };
-
-  async function verifyUserInfos() {
-    client.get(`is-authenticated`).then((data) => {
-      setIsAuthenticated(data.isAuthenticated);
-      if (data.isAuthenticated) {
-        setIsAdmin(data.user.isAdmin);
-      }
-    });
-  }
 
   const fetch_favorites = async () => {
     const fetch_favorites_aux = async () => {
@@ -74,7 +69,6 @@ export default function Favorites() {
 
   useEffect(() => {
     fetch_all_citations();
-    verifyUserInfos();
     fetch_favorites();
   }, []);
 

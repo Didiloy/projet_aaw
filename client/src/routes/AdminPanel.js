@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
 import User from "../components/User";
 import useClient from "../services/api";
+import { redirect } from "react-router-dom";
+import { useSelector } from "react-redux";
 export default function AdminPanel() {
   let [all_users, set_all_users] = useState([]);
   let id = 0;
   const client = useClient();
+  const username = useSelector((state) => state.username.username);
+  const isAdmin = useSelector((state) => state.isAdmin.isAdmin);
+  let [isAuthenticated, setIsAuthenticated] = useState(username !== "");
+
+  useEffect(() => {
+    setIsAuthenticated(username !== "");
+  }, [username]);
 
   const fetch_all_users = () => {
     client
@@ -18,26 +27,15 @@ export default function AdminPanel() {
   };
 
   async function verifyIsAdmin() {
-    client
-      .get(`is-authenticated`)
-      .then((data) => {
-        if (!data.user.isAdmin) {
-          window.location.href = "/";
-        }
-      })
-      .catch((err) => {
-        window.location.href = "/";
-      });
+    if (!isAdmin) {
+      return redirect("/");
+    }
   }
 
   useEffect(() => {
     verifyIsAdmin();
     fetch_all_users();
   }, []);
-
-  useEffect(() => {
-    console.log(all_users);
-  }, [all_users]);
 
   return (
     <div>

@@ -5,20 +5,14 @@ import useClient from "../services/api";
 export default function Citations() {
   let [citation_to_add, set_citation_to_add] = useState("");
   let [all_citations, set_all_citations] = useState([]);
-  let [isAdmin, setIsAdmin] = useState(false);
-  let [isAuthenticated, setIsAuthenticated] = useState(false);
   const client = useClient();
+  const username = useSelector((state) => state.username.username);
+  const isAdmin = useSelector((state) => state.isAdmin.isAdmin);
+  let [isAuthenticated, setIsAuthenticated] = useState(username !== "");
 
-  async function verifyUserInfos() {
-    client.get(`is-authenticated`).then((data) => {
-      setIsAuthenticated(data.isAuthenticated);
-      if (data.isAuthenticated) {
-        setIsAdmin(data.user.isAdmin);
-      }
-    });
-  }
-
-  const username = useSelector((state) => state.username);
+  useEffect(() => {
+    setIsAuthenticated(username !== "");
+  }, [username]);
 
   const fetch_all_citations = async () => {
     const fetch_all_citations_aux = async () => {
@@ -37,7 +31,6 @@ export default function Citations() {
 
   useEffect(() => {
     fetch_all_citations();
-    verifyUserInfos();
   }, []);
 
   const modifyCitation = (event) => {
