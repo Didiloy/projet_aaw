@@ -11,16 +11,18 @@ import Nav from "./components/Nav.js";
 import { Outlet } from "react-router-dom";
 import { store } from "./store";
 function Layout() {
+
   return (
     <div>
       <Nav />
       {/* //Outlet is a placeholder for all the nested route components */}
-      <Outlet />
+      <Outlet/>
     </div>
   );
 }
 
 const AppRouting = () => {
+  
   return (
     <Provider store={store}>
       <Router>

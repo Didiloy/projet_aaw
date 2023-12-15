@@ -29,6 +29,27 @@ export default function Nav() {
     });
   }
 
+  function handleDeconnexion() {
+    fetch("/auth/logout", { method: "get" }).then(() => {
+      window.location.href = "/";
+    });
+  }
+
+  async function isConnected() {
+    client.get("is-authenticated").then((data) => {
+      //Il faut set les autre state avec isAuthenticated pck react redessine les composant
+      setIsAuthenticated(data.isAuthenticated);
+    });
+  }
+
+  useEffect(() => {
+    isConnected();
+  }, []);
+
+  function goToLogIn() {
+    window.location.href = "/auth/discord/login";
+  }
+
   async function handleSearch(event) {
     event.preventDefault();
     const search = event.target[0].value;
@@ -79,6 +100,28 @@ export default function Nav() {
               aria-label="Search"
             />
           </form>
+          {isAuthenticated ? (
+            <div>
+            <button
+                onClick={handleDeconnexion}
+                type="button"
+                className="btn btn-danger btn-lg px-4 gap-3"
+              >
+                Déconnexion
+              </button>
+          </div>
+          ) : (
+            <div>
+              <button
+                className="w-100 btn btn-lg btn-primary"
+                type="submit"
+                onClick={goToLogIn}
+              >
+                Connexion
+              </button>
+            </div>
+          )
+          }
         </div>
       </div>
     </nav>
