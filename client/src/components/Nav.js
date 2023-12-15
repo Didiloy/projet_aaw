@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import useClient from "../services/api";
 import { changeUsername, changeIsAdmin } from "../store";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 
 export default function Nav() {
   const client = useClient();
@@ -31,14 +31,7 @@ export default function Nav() {
 
   function handleDeconnexion() {
     fetch("/auth/logout", { method: "get" }).then(() => {
-      window.location.href = "/";
-    });
-  }
-
-  async function isConnected() {
-    client.get("is-authenticated").then((data) => {
-      //Il faut set les autre state avec isAuthenticated pck react redessine les composant
-      setIsAuthenticated(data.isAuthenticated);
+      return redirect("/");
     });
   }
 
@@ -53,7 +46,8 @@ export default function Nav() {
   async function handleSearch(event) {
     event.preventDefault();
     const search = event.target[0].value;
-    window.location.href = `/citations/search/${search}`;
+    redirect(`/citations/search/${search}`);
+    // window.location.href = `/citations/search/${search}`;
   }
 
   useEffect(() => {
@@ -102,14 +96,14 @@ export default function Nav() {
           </form>
           {isAuthenticated ? (
             <div>
-            <button
+              <button
                 onClick={handleDeconnexion}
                 type="button"
                 className="btn btn-danger btn-lg px-4 gap-3"
               >
                 Déconnexion
               </button>
-          </div>
+            </div>
           ) : (
             <div>
               <button
@@ -120,8 +114,7 @@ export default function Nav() {
                 Connexion
               </button>
             </div>
-          )
-          }
+          )}
         </div>
       </div>
     </nav>

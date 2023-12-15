@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Citation from "./Citation";
 import { useSelector } from "react-redux";
 import useClient from "../services/api";
+import ErrorToast from "./ErrorToast";
 export default function CitationsList(props) {
   const { all_citations, isAdmin, deleteCitation, isAuthenticated } = props;
   let [favorites, setFavorites] = useState([]);
@@ -15,16 +16,27 @@ export default function CitationsList(props) {
   const toggleShowError = () => setShowError(!showError);
 
   const fetch_favorites = async () => {
+    if (all_citations.length === 0) {
+      return;
+    }
     const fetch_favorites_aux = async () => {
       client
         .get("get-favorites/" + username)
         .then((data) => {
           let fav = [];
-          data.map((citation) => {
-            fav.push(citation.quoteId);
-          });
-          setFavorites(fav);
-          setFetched_favorites(true);
+          try {
+            data.map((citation) => {
+              fav.push(citation.quoteId);
+            });
+            setFavorites(fav);
+            setFetched_favorites(true);
+          } catch (err) {
+            setErrorMessage(
+              "Il y a eu une erreur pendant la récupération des favoris."
+            );
+            toggleShowError();
+            console.log("err fetching favorite:" + err);
+          }
         })
         .catch((err) => {
           setErrorMessage(
@@ -39,7 +51,7 @@ export default function CitationsList(props) {
 
   useEffect(() => {
     fetch_favorites();
-  }, []);
+  }, [all_citations]);
 
   return (
     <div className="row">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import CitationsList from "../components/CitationsList";
 import useClient from "../services/api";
+import { useSelector } from "react-redux";
 export default function Search() {
   const { search } = useParams();
   const [all_citations, set_all_citations] = useState([]);

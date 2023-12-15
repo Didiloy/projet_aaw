@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import useClient from "../services/api";
+import { redirect } from "react-router-dom";
+import { useSelector } from "react-redux";
 export default function User(props) {
   const { username, isAdmin, isConnected } = props;
   const isEven = props.isEven;
@@ -8,6 +10,7 @@ export default function User(props) {
   const rounded_bottom = props.rounded_bottom ? "rounded-bottom mb-5" : "";
   const css_class_name = `${backgroundColor} ${rounded_top} ${rounded_bottom}`;
   const client = useClient();
+  const current_username = useSelector((state) => state.username.username);
 
   const handleOnClick = (event) => {
     event.preventDefault();
@@ -31,11 +34,11 @@ export default function User(props) {
     client
       .get("disconnect-user/" + username)
       .then((data) => {
-        //TODO condition du if -> chopper le user courant 
-        if(data.username == username){
-          window.location.href= "/";
-        }else window.location.reload();
-        
+        //TODO condition du if -> chopper le user courant
+        if (data.username == current_username) {
+          // window.location.href = "/";
+          return redirect("/");
+        } else window.location.reload();
       })
       .catch((err) => {
         console.log(err);
