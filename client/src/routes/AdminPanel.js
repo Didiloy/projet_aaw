@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import User from "../components/User";
 import useClient from "../services/api";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 export default function AdminPanel() {
   let [all_users, set_all_users] = useState([]);
@@ -10,7 +10,7 @@ export default function AdminPanel() {
   const username = useSelector((state) => state.username.username);
   const isAdmin = useSelector((state) => state.isAdmin.isAdmin);
   let [isAuthenticated, setIsAuthenticated] = useState(username !== "");
-
+  const navigate = useNavigate();
   useEffect(() => {
     setIsAuthenticated(username !== "");
   }, [username]);
@@ -26,9 +26,9 @@ export default function AdminPanel() {
       });
   };
 
-  async function verifyIsAdmin() {
+  function verifyIsAdmin() {
     if (!isAdmin) {
-      return redirect("/");
+      return navigate("/");
     }
   }
 

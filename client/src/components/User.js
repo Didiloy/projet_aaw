@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useClient from "../services/api";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 export default function User(props) {
   const { username, isAdmin, isConnected } = props;
@@ -11,7 +11,7 @@ export default function User(props) {
   const css_class_name = `${backgroundColor} ${rounded_top} ${rounded_bottom}`;
   const client = useClient();
   const current_username = useSelector((state) => state.username.username);
-
+  const navigate = useNavigate();
   const handleOnClick = (event) => {
     event.preventDefault();
     const body = {
@@ -36,8 +36,8 @@ export default function User(props) {
       .then((data) => {
         //TODO condition du if -> chopper le user courant
         if (data.username == current_username) {
-          // window.location.href = "/";
-          return redirect("/");
+          window.location.href = "/";
+          // return navigate("/");
         } else window.location.reload();
       })
       .catch((err) => {
