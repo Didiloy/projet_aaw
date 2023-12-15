@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import useClient from "../services/api";
 import { changeUsername, changeIsAdmin } from "../store";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, redirect } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Nav() {
   const client = useClient();
@@ -10,6 +10,7 @@ export default function Nav() {
   const isAdmin = useSelector((state) => state.isAdmin.isAdmin);
   let [isAuthenticated, setIsAuthenticated] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleUpdateUsername = (newUsername) => {
     dispatch(changeUsername(newUsername));
@@ -31,7 +32,7 @@ export default function Nav() {
 
   function handleDeconnexion() {
     fetch("/auth/logout", { method: "get" }).then(() => {
-      return redirect("/");
+      window.location.href = "/";
     });
   }
 
@@ -43,11 +44,10 @@ export default function Nav() {
     window.location.href = "/auth/discord/login";
   }
 
-  async function handleSearch(event) {
+  function handleSearch(event) {
     event.preventDefault();
     const search = event.target[0].value;
-    redirect(`/citations/search/${search}`);
-    // window.location.href = `/citations/search/${search}`;
+    return navigate(`/citations/search/${search}`);
   }
 
   useEffect(() => {

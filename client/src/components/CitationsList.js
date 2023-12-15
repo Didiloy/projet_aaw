@@ -19,6 +19,11 @@ export default function CitationsList(props) {
     if (all_citations.length === 0) {
       return;
     }
+    if (username === "") {
+      setFavorites([]);
+      setFetched_favorites(true);
+      return;
+    }
     const fetch_favorites_aux = async () => {
       client
         .get("get-favorites/" + username)
@@ -72,7 +77,7 @@ export default function CitationsList(props) {
               rounded_bottom={id === all_citations.length}
               deleteCitation={deleteCitation}
               isAuthenticated={isAuthenticated}
-              isFav={favorites.includes(citation.id)}
+              isFav={favorites != [] ? favorites.includes(citation.id) : false}
             />
           );
         })
