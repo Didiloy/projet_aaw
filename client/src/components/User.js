@@ -34,10 +34,8 @@ export default function User(props) {
     client
       .get("disconnect-user/" + username)
       .then((data) => {
-        //TODO condition du if -> chopper le user courant
         if (data.username == current_username) {
           window.location.href = "/";
-          // return navigate("/");
         } else window.location.reload();
       })
       .catch((err) => {
