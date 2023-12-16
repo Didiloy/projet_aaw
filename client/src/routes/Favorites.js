@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import CitationsList from "../components/CitationsList";
 import { useSelector } from "react-redux";
 import useClient from "../services/api";
+import ErrorToast from "../components/ErrorToast";
 
 export default function Favorites() {
   let [all_citations, set_all_citations] = useState([]);
@@ -31,6 +32,7 @@ export default function Favorites() {
   };
 
   const fetch_favorites = async () => {
+    if(!isAuthenticated) return;
     const fetch_favorites_aux = async () => {
       client
         .get(`get-favorites/${username}`)
@@ -88,17 +90,27 @@ export default function Favorites() {
             <h1>Favoris</h1>
           </div>
         </div>
-        {favorites_citations.length > 0 ? (
-          <CitationsList
-            all_citations={favorites_citations}
-            isAdmin={isAdmin}
-            deleteCitation={deleteCitation}
-            isAuthenticated={isAuthenticated}
-          />
+        {isAuthenticated ? (
+          <div>
+            {favorites_citations.length > 0 ? (
+              <CitationsList
+                all_citations={favorites_citations}
+                isAdmin={isAdmin}
+                deleteCitation={deleteCitation}
+                isAuthenticated={isAuthenticated}
+              />
+            ) : (
+              <div className="row">
+                <div className="col-12 d-flex justify-content-center">
+                  <h1>Vous n'avez pas de favoris</h1>
+                </div>
+              </div>
+            )}
+          </div>
         ) : (
           <div className="row">
             <div className="col-12 d-flex justify-content-center">
-              <h1>Vous n'avez pas de favoris</h1>
+              <h3>Vous devez être connecté pour accéder à vos favoris.</h3>
             </div>
           </div>
         )}
