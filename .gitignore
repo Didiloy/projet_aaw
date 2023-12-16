@@ -6,3 +6,4 @@ client/dist
 client/.parcel-cache
 server/database/node_modules
 server/.env
+server/database/prisma/dev.db
