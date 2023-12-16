@@ -28,8 +28,7 @@ export default function Hero() {
               Bienvenue sur le site des citations ultimes flamboyantes inspirées
               de Marcel Proust. Laissez vous inspirer et rajoutez vos propres
               citations. Si vous manquez d'idées vous pouvez aller consulter les
-              citations des autres utilisateurs. Pour une meilleure utilisation
-              vous pouvez vous connecter grâce à votre compte discord.
+              citations des autres utilisateurs.
             </p>
             <br />
             {username == "" ? (
