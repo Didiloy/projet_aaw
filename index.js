@@ -34,7 +34,7 @@ app.listen(port, () => {
   console.log(`The app server is running on port: ${port}`);
 });
 
-const DIST_DIR = path.join(__dirname, "..", "client", "dist");
+const DIST_DIR = path.join(__dirname, "client", "dist");
 const PUBLIC_DIR = path.join(__dirname, "..", "client", "public");
 const HTML_FILE = path.join(
   process.env.ENVIRONMENT == "dev" ? PUBLIC_DIR : DIST_DIR,
