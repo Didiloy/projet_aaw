@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CitationsList from "../components/CitationsList";
 import useClient from "../services/api";
@@ -39,8 +39,13 @@ export default function Search() {
   };
 
   useEffect(() => {
+    set_all_citations_fetched(false);
+    if (search === undefined || search == "") {
+      set_all_citations_fetched(true);
+      return;
+    }
     getCitations(search);
-  }, []);
+  }, [search]);
 
   return (
     <div>
@@ -53,28 +58,32 @@ export default function Search() {
             <p>Recherche de : {search}</p>
           </div>
         </div>
-        {all_citations_fetched ? (
-          all_citations.length > 0 ? (
-            <CitationsList
-              all_citations={all_citations}
-              isAdmin={isAdmin}
-              deleteCitation={deleteCitation}
-              isAuthenticated={isAuthenticated}
-            />
-          ) : (
+        {all_citations_fetched
+          ? (
+            all_citations.length > 0
+              ? (
+                <CitationsList
+                  all_citations={all_citations}
+                  isAdmin={isAdmin}
+                  deleteCitation={deleteCitation}
+                  isAuthenticated={isAuthenticated}
+                />
+              )
+              : (
+                <div className="row">
+                  <div className="col-12 d-flex justify-content-center">
+                    <h3>Aucune citation ne correspond à votre recherche</h3>
+                  </div>
+                </div>
+              )
+          )
+          : (
             <div className="row">
               <div className="col-12 d-flex justify-content-center">
-                <h3>Aucune citation ne correspond à votre recherche </h3>
+                <h3>Chargement des citations...</h3>
               </div>
             </div>
-          )
-        ) : (
-          <div className="row">
-            <div className="col-12 d-flex justify-content-center">
-              <h3>Chargement des citations...</h3>
-            </div>
-          </div>
-        )}
+          )}
       </div>
       {showError ? <ErrorToast content={errorMessage} /> : <div />}
     </div>

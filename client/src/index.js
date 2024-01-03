@@ -37,6 +37,11 @@ const AppRouting = () => {
               path="/citations/search/:search"
               element={<Search />}
             />
+            <Route
+              exact
+              path="/citations/search"
+              element={<Search />}
+            />
           </Route>
         </Routes>
       </Router>
