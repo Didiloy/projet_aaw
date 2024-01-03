@@ -54,7 +54,7 @@ app.use(cookieParser());
 //=======Authentication=======
 app.get("/auth/discord/login", async (req, res) => {
   const url =
-    "https://discord.com/api/oauth2/authorize?client_id=1172524572537532529&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fdiscord%2Fcallback&response_type=code&scope=identify";
+    "https://discord.com/api/oauth2/authorize?client_id=1172524572537532529&redirect_uri=%2Fauth%2Fdiscord%2Fcallback&response_type=code&scope=identify";
   res.redirect(url);
 });
 
