@@ -31,52 +31,55 @@ export default function Hero() {
               citations des autres utilisateurs.
             </p>
             <br />
-            {username == "" ? (
-              <div className="d-flex flex-column align-items-center justify-content-center">
-                <p className="col-lg-10 fs-4 mx-auto font-bookantiqua">
-                  Vous n'êtes pas connecté. Connectez-vous avec votre compte
-                  discord pour ajouter des citations
-                </p>
-                <button
-                  className="w-80 btn btn-lg btn-dark font-bookantiqua"
-                  type="submit"
-                  onClick={goToLogIn}
-                >
-                  Connexion avec Discord
-                </button>
-              </div>
-            ) : (
-              <div className="d-flex flex-column align-items-center justify-content-center">
-                <p className="fs-4 mx-auto font-bookantiqua">
-                  Vous êtes connecté en tant que <b>{username}</b>. Ajoutez ou
-                  lisez des citations.
-                </p>
-                <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                  <Link
-                    to="/citations"
-                    type="button"
-                    className="btn btn-primary btn-lg px-4 gap-3 font-bookantiqua"
-                  >
-                    Voir les citations
-                  </Link>
+            {username == ""
+              ? (
+                <div className="d-flex flex-column align-items-center justify-content-center">
+                  <p className="col-lg-10 fs-4 mx-auto font-bookantiqua">
+                    Vous n'êtes pas connecté. Connectez-vous avec votre compte
+                    discord pour ajouter des citations
+                  </p>
                   <button
-                    onClick={handleDeconnexion}
-                    type="button"
-                    className="btn btn-danger btn-lg px-4 gap-3 font-bookantiqua"
+                    className="w-80 btn btn-lg btn-dark font-bookantiqua"
+                    type="submit"
+                    onClick={goToLogIn}
                   >
-                    Se deconnecter
+                    Connexion avec Discord
                   </button>
                 </div>
-              </div>
-            )}
+              )
+              : (
+                <div className="d-flex flex-column align-items-center justify-content-center">
+                  <p className="fs-4 mx-auto font-bookantiqua">
+                    Vous êtes connecté en tant que{" "}
+                    <b>{username}</b>. Ajoutez ou lisez des citations.
+                  </p>
+                  <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <Link
+                      to="/citations"
+                      type="button"
+                      className="btn btn-primary btn-lg px-4 gap-3 font-bookantiqua"
+                    >
+                      Voir les citations
+                    </Link>
+                    <button
+                      onClick={handleDeconnexion}
+                      type="button"
+                      className="btn btn-danger btn-lg px-4 gap-3 font-bookantiqua"
+                    >
+                      Se deconnecter
+                    </button>
+                  </div>
+                </div>
+              )}
           </div>
-          <div className="col-md-10 mx-auto col-lg-5 px-5 d-flex align-items-center justify-content-center">
+          <div className="col-md-10 mx-auto col-lg-5 px-5 d-flex flex-column align-items-center justify-content-center">
             <img
               src="Marcel_Proust.jpg"
               width="500"
               height="580"
               className="rounded-3"
             />
+            <p>Marcel Proust, auteur français, 1871-1922</p>
           </div>
         </div>
       </div>
